@@ -1,6 +1,6 @@
 ![CoreMedia Labs Logo](https://documentation.coremedia.com/badges/banner_coremedia_labs_wide.png "CoreMedia Labs Logo")
 
-![CoreMedia Content Cloud Version](https://img.shields.io/static/v1?message=&lt;VERSION&gt;&label=CoreMedia%20Content%20Cloud&style=for-the-badge&labelColor=666666&color=672779 
+![CoreMedia Content Cloud Version](https://img.shields.io/static/v1?message=2010.2&label=CoreMedia%20Content%20Cloud&style=for-the-badge&labelColor=666666&color=672779 
 "This badge shows the CoreMedia version this project is compatible with. 
 Please read the versioning section of the project to see what other CoreMedia versions are supported and how to find them."
 )
@@ -9,18 +9,7 @@ Please read the versioning section of the project to see what other CoreMedia ve
 If a project is inactive it means that the development has been discontinued and won't support future CoreMedia versions."
 )
 
-_Optional:_
-
-![System Version](https://img.shields.io/static/v1?message=&lt;external_system_version&gt;&label=&lt;external_system_name&gt;&style=for-the-badge&labelColor=6FC3B8&color=006CAE 
-"CoreMedia Labs projects may depend on third party systems or APIs. 
-This badge type shows the version number that is required for the selected project version."
-)
-
-> **How to use the template repository**
-> 1. Search for all occurrences of <PROJECT_NAME> and <PROJECT_REPO> and replace them with the actual names of your project.
-> 1. Search for further blockquotes in the documentation. They have to be replaced by real documentation.
-
-# <PROJECT_NAME>
+# Content-sync-example
 
 > If possible, the project name should be prefixed with name of the CoreMedia feature it supports, e.g.:
 >

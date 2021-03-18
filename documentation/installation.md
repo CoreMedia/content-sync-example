@@ -24,7 +24,7 @@ Depending on what you are setup and your plans, you can integrate this project i
 
 ## Release Download
 
-Go to [Release](https://github.com/CoreMedia/<PROJECT_REPO>/releases) and download the version that matches you CMCC release version.
+Go to [Release](https://github.com/CoreMedia/content-sync-example/releases) and download the version that matches you CMCC release version.
 
 From the Blueprint workspace's root folder, extract the ZIP file into `modules/extensions`.
 
@@ -62,7 +62,7 @@ After adapting the configuration run the extension tool in
 
 ```bash
 $ mvn extensions:sync
-$ mvn extensions:sync -Denable=<PROJECT_MVN_MODULE_NAME>
+$ mvn extensions:sync -Denable=content-sync-example
 ``` 
 
 This will activate the extension. The extension tool will also set the relative path for the parents of the extension modules.

@@ -1,4 +1,4 @@
-# <PROJECT_NAME> Manual
+# Content-sync-example Manual
 
 ## Table of Contents
 
@@ -8,7 +8,7 @@
 
 1. [Installation](installation.md)
 
-    How to administrate GlobalLink extension (especially in CoreMedia Studio).
+    How to configure Content-sync extension (especially in CoreMedia Studio).
 
 1. [Contribute](contribute.md)
 
@@ -27,4 +27,4 @@
 * [Used Third-Party Libraries](THIRD-PARTY.txt)
 
     <!-- GitHub Pages is not able to list directory contents. Jump back to GitHub directly.  -->
-    For license texts have a look at [third-party-licenses](https://github.com/CoreMedia/<PROJECT_REPO>/tree/master/docs/third-party-licenses).
+    For license texts have a look at [third-party-licenses](https://github.com/CoreMedia/content-sync-example/tree/master/docs/third-party-licenses).
