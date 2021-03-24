@@ -40,9 +40,32 @@ The picture below is depicting the high-level architecture:
 
 ![CoreMedia Labs Logo](img/Architecture.jpg "CoreMedia Labs Logo")
 
-## Studio-client configuration
-
 ## Studio-server configuration
 
+## Studio-client configuration
+In Studio, it is necessary to create a new Settings document inside the folder:
+* /Options/Settings/Content Sync/ContentSyncSettings
+
+The following entries needs to be present:
+
+- Toplevel element is named **"environments"** and is of type "StructList"
+- Below the StructList with name **environments** it is necessary to add one struct per environment
+
+Each Struct (which is representing an environment) has the following entries:
+
+- ident (identifier which is the same used as in the studio-server configuration)
+- name (Name which should be displayed in the CoreMedia Studio interface)
+- recursion (Number indicating how many sub-references should be resolved. 1 is the default)
+
+The picture below is showing an example:
+
+![CoreMedia Labs Logo](img/Config_example.png "Config example")
+
 ## Interface
+The Content-sync-example can be (after the extension was correctly set-up) started in CoreMedia Studio by simply opening the "Apps"-Menu,  
+and next by a single click on the Content Sync button. The Picture below is showing the button inside the Apps menu.
+
+![AppsMenu](img/Apps-Menu.jpg)
+
+
 
