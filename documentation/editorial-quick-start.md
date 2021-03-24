@@ -57,6 +57,17 @@ Each Struct (which is representing an environment) has the following entries:
 - name (Name which should be displayed in the CoreMedia Studio interface)
 - recursion (Number indicating how many sub-references should be resolved. 1 is the default)
 
+As an addition, it is possible to define filters for:
+
+- Property names
+- Content types
+
+which are in general ignored, even for the references.
+To add filtering options, the following configuration can be made:
+
+- Add a new StringList called **propertyExcludes** to the root. Once done, each entry is representing the property name which should be excluded.
+- Add a new StringList called **contentTypeExcludes** to the root. Once done, each entry is representing the content type to be excluded.
+
 The picture below is showing an example:
 
 ![CoreMedia Labs Logo](img/Config_example.png "Config example")
