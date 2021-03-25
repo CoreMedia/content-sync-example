@@ -15,7 +15,7 @@ Aim of this project is to provide a small starter set to perform content transfe
 
 The picture below is depicting the Content synchronization editor
 
-![Content-sync editor](img/Full_Featured.png)
+![Content-sync editor](documentation/img/Full_Featured.png)
 
 ## Versioning
 
