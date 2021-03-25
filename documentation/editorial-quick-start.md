@@ -100,3 +100,10 @@ Once a workflow is started or there are already running synchronization workflow
 Each workflow displayed in this panel can be ***aborted***. If the workflow terminates, the entry also disappears.
 
 ![Content-sync editor](img/WFS_Visible.png)
+
+As mentioned in the configuration section, it is also possible to configure ***exclusions*** where each exclusion
+- property exclusion
+- content-type exclusion
+
+will appear as separate Collapsible panel. The picture below is showing the panels.
+

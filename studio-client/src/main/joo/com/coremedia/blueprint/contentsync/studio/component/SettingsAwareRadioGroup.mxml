@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<local:SettingsAwareRadioGroupBase
+        xmlns:fx="http://ns.adobe.com/mxml/2009"
+        xmlns:local="com.coremedia.blueprint.contentsync.studio.component.*" xmlns:data="com.coremedia.ui.exml.*"
+>
+
+
+  <fx:Script><![CDATA[
+    import com.coremedia.blueprint.contentsync.studio.constant.ContentSyncConstants;
+
+    public static const xtype:String = "com.coremedia.blueprint.contentsync.studio.component.SettingsAwareRadioGroup";
+    private var config:SettingsAwareRadioGroup;
+
+
+    public native function SettingsAwareRadioGroup(config:SettingsAwareRadioGroup = null);
+    ]]></fx:Script>
+
+  <local:items>
+  </local:items>
+  <local:bindTo>
+    <data:ValueExpression context="{config.modelBean}" expression="{ContentSyncConstants.SELECTED_ENVIRONMENT}"/>
+  </local:bindTo>
+</local:SettingsAwareRadioGroupBase>

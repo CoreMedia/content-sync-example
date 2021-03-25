@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<local:EmptySyncPanelBase xmlns:fx="http://ns.adobe.com/mxml/2009"
+                          xmlns:local="com.coremedia.blueprint.contentsync.studio.panel.*"
+                          xmlns="exml:ext.config" xmlns:editor="exml:com.coremedia.cms.editor.sdk.config"
+>
+
+
+  <fx:Script><![CDATA[
+    public static const xtype:String = "com.coremedia.blueprint.contentsync.studio.panel.emptySyncPanel";
+    private var config:EmptySyncPanel;
+
+    public native function EmptySyncPanel(config:EmptySyncPanel = null);
+    ]]></fx:Script>
+
+
+  <local:items>
+
+    <editor:CollapsiblePanel
+            title="{resourceManager.getString('com.coremedia.blueprint.contentsync.studio.ContentSyncPluginResources','ContentSync_EmptySyncPanel_Name')}"
+            collapsible="false"
+            collapsed="false"
+    >
+      <editor:items>
+
+      </editor:items>
+
+
+    </editor:CollapsiblePanel>
+  </local:items>
+</local:EmptySyncPanelBase>

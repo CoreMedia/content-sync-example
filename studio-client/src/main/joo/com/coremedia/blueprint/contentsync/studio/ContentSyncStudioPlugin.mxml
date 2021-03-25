@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:ContentSyncStudioPluginBase
+        xmlns:fx="http://ns.adobe.com/mxml/2009"
+        xmlns:editor="exml:com.coremedia.cms.editor.sdk.config"
+        xmlns:exml="http://www.jangaroo.net/exml/0.8"
+        xmlns:local="com.coremedia.blueprint.contentsync.studio.*"
+        xmlns:ui="exml:com.coremedia.ui.config"
+        xmlns="exml:ext.config"
+        xmlns:contentsync="exml:com.coremedia.blueprint.contentsync.studio"
+>
+  <fx:Metadata>
+
+  </fx:Metadata>
+  <fx:Script><![CDATA[
+    import com.coremedia.blueprint.contentsync.studio.model.ContentSyncModel;
+    import com.coremedia.blueprint.contentsync.studio.model.ContentSyncReferenceModel;
+    import com.coremedia.ui.skins.ButtonSkin;
+
+    public static const xtype:String = "com.coremedia.blueprint.contentsync.studio.contentSyncStudioPlugin";
+    public static const CONTENT_SYNC_EDITOR_BUTTON_ID:String = "ContentSyncButtonId";
+    private var config:ContentSyncStudioPlugin;
+
+    public native function ContentSyncStudioPlugin(config:ContentSyncStudioPlugin = null);
+    ]]></fx:Script>
+
+  <local:rules>
+    <editor:ExtensionsMenuToolbar>
+      <editor:plugins>
+        <ui:AddItemsPlugin>
+          <ui:items>
+            <Button id_="{CONTENT_SYNC_EDITOR_BUTTON_ID}"
+                    itemId="{CONTENT_SYNC_EDITOR_BUTTON_ID}"
+                    text="{resourceManager.getString('com.coremedia.blueprint.contentsync.studio.ContentSyncPluginResources','ContentSync_MenuToolbar_Button_Name')}"
+                    ui="{ButtonSkin.HIGHLIGHT.getSkin()}"
+                    scale="medium"
+                    iconCls="{resourceManager.getString('com.coremedia.blueprint.contentsync.studio.ContentSyncPluginResources','ContentSync_icon')}">
+              <baseAction>
+                <contentsync:OpenContentSyncWindowAction/>
+              </baseAction>
+            </Button>
+          </ui:items>
+        </ui:AddItemsPlugin>
+      </editor:plugins>
+    </editor:ExtensionsMenuToolbar>
+    <editor:WorkArea>
+      <editor:plugins>
+        <editor:WorkAreaTabTypesPlugin>
+          <editor:tabTypes>
+            <editor:ComponentBasedWorkAreaTabType>
+              <editor:tabComponent>
+                <contentsync:ContentSyncEditor  closable="true" scrollable="true"/>
+              </editor:tabComponent>
+            </editor:ComponentBasedWorkAreaTabType>
+          </editor:tabTypes>
+        </editor:WorkAreaTabTypesPlugin>
+      </editor:plugins>
+    </editor:WorkArea>
+  </local:rules>
+  <local:configuration>
+    <editor:RegisterRestResource beanClass="{ContentSyncReferenceModel}"/>
+    <editor:RegisterRestResource beanClass="{ContentSyncModel}"/>
+
+  </local:configuration>
+</local:ContentSyncStudioPluginBase>

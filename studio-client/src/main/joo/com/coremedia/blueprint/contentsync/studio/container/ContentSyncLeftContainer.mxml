@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<local:ContentSyncLeftContainerBase xmlns:ui="exml:com.coremedia.ui.config"
+           xmlns:fx="http://ns.adobe.com/mxml/2009"
+           xmlns:local="com.coremedia.blueprint.contentsync.studio.container.*"
+           xmlns:editor="exml:com.coremedia.cms.editor.sdk.config"
+           xmlns:contentsync="exml:com.coremedia.blueprint.contentsync.studio"
+           xmlns="exml:ext.config"
+           flex="2"
+           ui="{ContainerSkin.DARK_200}"
+           height="100%"
+>
+  <fx:Script><![CDATA[
+    import com.coremedia.blueprint.contentsync.studio.component.ExcludeListRadioGroupBase;
+    import com.coremedia.blueprint.contentsync.studio.editor.ContentSyncEditorBase;
+    import com.coremedia.ui.bem.SpacingBEMEntities;
+    import com.coremedia.ui.data.Bean;
+    import com.coremedia.ui.skins.ButtonSkin;
+    import com.coremedia.ui.skins.ContainerSkin;
+
+    public static const xtype:String = "com.coremedia.blueprint.contentsync.studio.container.contentSyncLeftContainer";
+    private var config:ContentSyncLeftContainer;
+
+    [Bindable]
+    public var modelBean:Bean;
+
+    private function convertId(id:String):String {
+      if (!id) {
+        return "unknown_panel";
+      }
+      return id.concat('_panel');
+    }
+
+    public native function ContentSyncLeftContainer(config:ContentSyncLeftContainer = null);
+    ]]></fx:Script>
+  <local:items>
+    <editor:CollapsiblePanel
+            title="{resourceManager.getString('com.coremedia.blueprint.contentsync.studio.ContentSyncPluginResources','ContentSync_Selection')}"
+            collapsible="false"
+            collapsed="false"
+    >
+      <editor:items>
+        <ui:BoundRadioGroup
+                defaultValue="{ContentSyncEditorBase.PARTIAL_SYNC_ID}"
+                toValue="{convertId}">
+          <ui:bindTo>
+            <ui:ValueExpression context="{config.modelBean}" expression="selectedSyncMode"/>
+          </ui:bindTo>
+          <ui:items>
+            <Radio itemId="{ContentSyncEditorBase.PARTIAL_SYNC_ID}"
+                   boxLabel="{resourceManager.getString('com.coremedia.blueprint.contentsync.studio.ContentSyncPluginResources','ContentSync_PartialSync_Name')}"/>
+            <!--
+             Extend here for more synchronization modes
+            -->
+          </ui:items>
+        </ui:BoundRadioGroup>
+      </editor:items>
+    </editor:CollapsiblePanel>
+    <editor:CollapsiblePanel
+            title="{resourceManager.getString('com.coremedia.blueprint.contentsync.studio.ContentSyncPluginResources','ContentSync_Environments')}"
+            collapsible="false"
+            collapsed="false"
+    >
+      <editor:items>
+        <contentsync:SettingsAwareRadioGroup vertical="false" columns="1" modelBean="{config.modelBean}"/>
+      </editor:items>
+    </editor:CollapsiblePanel>
+    <editor:CollapsiblePanel
+            title="{resourceManager.getString('com.coremedia.blueprint.contentsync.studio.ContentSyncPluginResources','ContentSync_WFS_Panel_Name')}"
+            collapsible="false"
+            collapsed="false"
+    >
+      <editor:items>
+        <Button ui="{ButtonSkin.MATERIAL_SECONDARY}" text="{resourceManager.getString('com.coremedia.blueprint.contentsync.studio.ContentSyncPluginResources','ContentSync_WFS_StartButton_Label')}">
+          <baseAction>
+            <contentsync:TriggerWorkflowAction modelBean="{config.modelBean}"/>
+          </baseAction>
+        </Button>
+      </editor:items>
+      <editor:layout>
+        <layout_HBox/>
+      </editor:layout>
+    </editor:CollapsiblePanel>
+    <editor:CollapsiblePanel
+            title="{resourceManager.getString('com.coremedia.blueprint.contentsync.studio.ContentSyncPluginResources','ContentSync_PropertySelect_Name')}"
+            collapsible="false"
+            collapsed="false"
+    >
+      <editor:items>
+        <contentsync:ExcludeListRadioGroup modelBean="{config.modelBean}" modelProperty="{ExcludeListRadioGroupBase.PROPERTY_EXCLUDE}"/>
+      </editor:items>
+      <editor:layout>
+        <layout_HBox/>
+      </editor:layout>
+      <editor:plugins>
+        <ui:BindVisibilityPlugin bindTo="{getExcludePropertiesVE()}" transformer="{hasEntries}"/>
+      </editor:plugins>
+    </editor:CollapsiblePanel>
+    <editor:CollapsiblePanel
+            title="{resourceManager.getString('com.coremedia.blueprint.contentsync.studio.ContentSyncPluginResources','ContentSync_ContentTypeSelect_Name')}"
+            collapsible="false"
+            collapsed="false"
+    >
+      <editor:items>
+        <contentsync:ExcludeListRadioGroup modelBean="{config.modelBean}" modelProperty="{ExcludeListRadioGroupBase.CONTENT_TYPE_EXCLUDE}"/>
+      </editor:items>
+      <editor:layout>
+        <layout_HBox/>
+      </editor:layout>
+      <editor:plugins>
+        <ui:BindVisibilityPlugin bindTo="{getExcludePropertiesVE()}" transformer="{hasEntries}"/>
+      </editor:plugins>
+    </editor:CollapsiblePanel>
+
+    <editor:CollapsiblePanel
+            title="{resourceManager.getString('com.coremedia.blueprint.contentsync.studio.ContentSyncPluginResources','ContentSync_WFS_Running_Processes')}"
+            collapsible="false"
+            collapsed="false">
+      <editor:items>
+        <contentsync:RunningWfsInstancesGridPanel/>
+      </editor:items>
+    </editor:CollapsiblePanel>
+
+  </local:items>
+  <local:plugins>
+    <ui:VerticalSpacingPlugin modifier="{SpacingBEMEntities.HORIZONTAL_SPACING_MODIFIER_200}"/>
+  </local:plugins>
+</local:ContentSyncLeftContainerBase>

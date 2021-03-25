@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<componentPackage>
+  <component class="com.coremedia.blueprint.contentsync.studio.ContentSyncStudioPlugin"/>
+  <component class="com.coremedia.blueprint.contentsync.studio.action.OpenContentSyncWindowAction"/>
+  <component class="com.coremedia.blueprint.contentsync.studio.action.TriggerWorkflowAction"/>
+  <component class="com.coremedia.blueprint.contentsync.studio.editor.ContentSyncEditor"/>
+  <component class="com.coremedia.blueprint.contentsync.studio.tree.ContentSyncSourceTreePanel"/>
+  <component class="com.coremedia.blueprint.contentsync.studio.tree.ContentSyncTargetTreePanel"/>
+  <component class="com.coremedia.blueprint.contentsync.studio.panel.PartialSyncPanel"/>
+  <component class="com.coremedia.blueprint.contentsync.studio.panel.EmptySyncPanel"/>
+  <component class="com.coremedia.blueprint.contentsync.studio.component.SettingsAwareRadioGroup"/>
+  <component class="com.coremedia.blueprint.contentsync.studio.component.ExcludeListRadioGroup"/>
+  <component class="com.coremedia.blueprint.contentsync.studio.wfs.RunningWfsInstancesGridPanel"/>
+
+</componentPackage>
