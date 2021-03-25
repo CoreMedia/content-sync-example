@@ -37,8 +37,9 @@ From the Blueprint workspace's root folder, clone this repository or your fork a
 ```
 $ mkdir -p modules/extensions
 $ cd modules/extensions
-$ git submodule add https://github.com/<YOUR_ORGANIZATION>/<PROJECT_REPO>.git <PROJECT_REPO>
+$ git submodule add https://github.com/CoreMedia/content-sync-example.git content-sync-example
 $ git submodule init
+$ cd content-sync-example
 $ git checkout -b <your-branch-name>
 ```
 
