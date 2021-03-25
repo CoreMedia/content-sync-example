@@ -11,5 +11,6 @@ public interface IAPIConstants {
   String QNAME_A = "a";
   String QNAME_LINK_PROPERTY = "LinkProperty";
   String QNAME_LINK_LIST_SINGLE_PROPERTY = "Link";
+  String QNAME_SELECTION_RULES_CONTENT = "content";
   String ATTR_HREF = "xlink:href";
 }

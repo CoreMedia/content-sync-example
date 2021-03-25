@@ -38,6 +38,7 @@ class PropertyMapperTest {
           "<Link xlink:href=\"coremedia:///cap/content/6\"/>" +
           "</LinkListProperty>" +
           "<LinkProperty Name=\"section\" LinkType=\"coremedia:///cap/contenttype/CMSymbol\" xlink:href=\"coremedia:///cap/content/8\"/>" +
+          "<LinkProperty Name=\"section\" LinkType=\"coremedia:///cap/contenttype/CMSymbol\"/>" +
           "</Struct>";
   private static final Markup STRUCT_MARKUP = MarkupFactory.fromString(STRUCT_REPLACED_STRING);
   private static final Struct STRUCT_REPLACED = mock(Struct.class);
@@ -50,7 +51,7 @@ class PropertyMapperTest {
           "</div>";
   private static final String RICHTEXT_REPLACED_STRING = "<div xmlns=\"http://www.coremedia.com/2003/richtext-1.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" +
           "<p><a xlink:show=\"embed\" xlink:href=\"coremedia:///cap/content/6\" xlink:type=\"simple\">link</a></p>" +
-          "<p/>" +
+          "<p><a xlink:show=\"embed\" xlink:href=\"#\" xlink:type=\"simple\">link</a></p>" +
           "<p><a xlink:show=\"embed\" xlink:href=\"https://www.coremedia.com\" xlink:type=\"simple\">link</a></p>" +
           "</div>";
   private static final UrlBlob BLOB = mock(UrlBlob.class);

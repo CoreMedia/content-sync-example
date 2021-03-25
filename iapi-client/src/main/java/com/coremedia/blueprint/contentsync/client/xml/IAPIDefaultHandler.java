@@ -16,6 +16,8 @@ public class IAPIDefaultHandler extends DefaultHandler {
   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
     if (IAPIConstants.QNAME_A.equals(qName)) {
       addLink(IAPIConstants.ATTR_HREF, attributes);
+    } else if (IAPIConstants.QNAME_SELECTION_RULES_CONTENT.equals(qName)) {
+      addLink(IAPIConstants.ATTR_HREF, attributes);
     } else if (IAPIConstants.QNAME_LINK_PROPERTY.equals(qName)) {
       addLink(IAPIConstants.ATTR_HREF, attributes);
     } else if (IAPIConstants.QNAME_LINK_LIST_SINGLE_PROPERTY.equals(qName)) {
