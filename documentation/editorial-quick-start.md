@@ -78,5 +78,25 @@ and next by a single click on the Content Sync button. The Picture below is show
 
 ![AppsMenu](img/Apps-Menu.jpg)
 
+Intentionally, the next step is to click on the Content-sync button and once done, the content-sync editor is opening. Per default, the first
+environment in the configured list is selected as active.
 
+![Content-sync editor](img/Content_Sync_Editor.png)
 
+### Left column
+The column on the left is basically displaying all configuration options and actions. 
+
+#### Collapsible panel 1
+Overview of all configured synchronization options. Please note that it is possible to add custom sync types e.g site-synchronization ... 
+
+#### Collapsible panel 2
+Overview of all configured environments. This panel is reflecting the settings.
+
+#### Collapsible panel 3
+This panel is providing the button to execute the workflow.
+
+#### Collapsible panel 4
+Once a workflow is started or there are already running synchronization workflows, those are displayed with the typename.
+Each workflow displayed in this panel can be ***aborted***. If the workflow terminates, the entry also disappears.
+
+![Content-sync editor](img/WFS_Visible.png)
