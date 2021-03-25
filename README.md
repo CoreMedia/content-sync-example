@@ -10,13 +10,12 @@ If a project is inactive it means that the development has been discontinued and
 )
 
 # Content-sync-example
+For cloud customers, a so called ingest-server is available for the purpose of creating / updating / publishing / withdrawing content.
+Aim of this project is to provide a small starter set to perform content transfers between environments.
 
-> If possible, the project name should be prefixed with name of the CoreMedia feature it supports, e.g.:
->
-> * `content-hub-adapter-<THIRD_PARTY_NAME>`
-> * `feedback-hub-adapter-<THIRD_PARTY_NAME>`
->
-> An additional abstract and feature list should be provided here.
+The picture below is depicting the Content synchronization editor
+
+![Content-sync editor](img/Full_Featured.png)
 
 ## Versioning
 
