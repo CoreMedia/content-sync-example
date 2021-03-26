@@ -1,5 +1,6 @@
 package com.coremedia.blueprint.contentsync.workflow.property;
 
+import com.coremedia.blueprint.contentsync.client.IAPIConstants;
 import com.coremedia.blueprint.contentsync.client.model.content.ContentDataModel;
 import com.coremedia.blueprint.contentsync.client.model.content.ContentRefDataModel;
 import com.coremedia.blueprint.contentsync.client.model.property.*;
@@ -53,9 +54,11 @@ public class PropertyMapper {
     Map<String, Object> convertedProperties = new HashMap<>();
     properties.forEach((name, value) -> {
       try {
-        Object convertedValue = getConverted(value, repository, idMap);
-        if (convertedValue != null) {
-          convertedProperties.put(name, convertedValue);
+        if (!IAPIConstants.MASTER_VERSION_PROPERTY.equals(name)) {
+          Object convertedValue = getConverted(value, repository, idMap);
+          if (convertedValue != null) {
+            convertedProperties.put(name, convertedValue);
+          }
         }
       } catch (Exception e) {
         throw new RuntimeException(e);
@@ -66,7 +69,6 @@ public class PropertyMapper {
 
   private Object getConverted(PropertyModel property, ContentRepository repository, Map<String, String> idMap)
           throws Exception {
-    // TODO take care of special property "masterVersion" (e.g., always point to latest version of referenced master)
     if (property instanceof StringPropertyModel) {
       return ((StringPropertyModel) property).getValue();
     } else if (property instanceof MarkupPropertyModel) {

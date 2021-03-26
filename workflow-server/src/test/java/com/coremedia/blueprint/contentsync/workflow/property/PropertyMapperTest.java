@@ -100,6 +100,7 @@ class PropertyMapperTest {
     properties.put("markup", getMarkupPropertyModel());
     properties.put("rules", getRulesPropertyModel());
     properties.put("blob", getBlobPorpertyModel());
+    properties.put("masterVersion", getIntegerPropertyModel());
     ContentDataModel model = new ContentDataModel();
     model.setProperties(properties);
 

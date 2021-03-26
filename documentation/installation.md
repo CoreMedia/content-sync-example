@@ -68,6 +68,28 @@ $ mvn extensions:sync -Denable=content-sync-example
 
 This will activate the extension. The extension tool will also set the relative path for the parents of the extension modules.
 
+## Upload Workflow
+
+The synchronization workflow must be uploaded to use the feature. This can be done
+in the provided Docker Compose configuration for local development by adjusting file
+`global/management-tools/docker/management-tools/src/docker/import-default-workflows`. In this file,
+add a line for the _StudioPartialSyncWofklow_ to variable *DEFAULT_WORKFLOWS*. With the very first Docker Compose
+start, the workflow will be uploaded automatically:
+
+```
+DEFAULT_WORKFLOWS="StudioSimplePublication:studio-simple-publication.xml \
+ImmediatePublication:immediate-publication.xml \
+StudioTwoStepPublication:studio-two-step-publication.xml \
+ThreeStepPublication:three-step-publication.xml \
+GlobalSearchAndReplace:global-search-replace.xml \
+DeriveSite:/com/coremedia/translate/workflow/derive-site.xml \
+Synchronization:/com/coremedia/translate/workflow/synchronization.xml
+StudioPartialSyncWorkflow:/com/coremedia/blueprint/contentsync/workflows/studio-partial-sync-workflow.xml"
+```
+
+Alternatively, the workflow can be uploaded to a Workflow Server running locally by executing script
+`modules/extensions/content-sync-example/workflow-server/script/deployWfs.sh`.
+
 ## Intellij IDEA Hints
 
 For the IDEA import:

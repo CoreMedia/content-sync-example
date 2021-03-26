@@ -4,6 +4,7 @@ public interface IAPIConstants {
 
   String ID_PREFIX = "coremedia:///cap/content/";
   String ROOT_FOLDER_ID = "1";
+  String MASTER_VERSION_PROPERTY = "masterVersion";
 
   /**
    * XML
