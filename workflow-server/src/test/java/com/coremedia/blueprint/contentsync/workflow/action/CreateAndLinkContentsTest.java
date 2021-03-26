@@ -6,6 +6,7 @@ import com.coremedia.blueprint.contentsync.client.model.property.MarkupPropertyM
 import com.coremedia.blueprint.contentsync.client.model.property.PropertyModel;
 import com.coremedia.blueprint.contentsync.client.model.property.StructPropertyModel;
 import com.coremedia.blueprint.contentsync.client.services.IAPIRepository;
+import com.coremedia.blueprint.contentsync.workflow.exception.ContentTypeMismatchException;
 import com.coremedia.blueprint.contentsync.workflow.property.PropertyMapper;
 import com.coremedia.cap.common.CapConnection;
 import com.coremedia.cap.content.Content;
@@ -22,10 +23,11 @@ import static org.mockito.Mockito.*;
 class CreateAndLinkContentsTest {
 
   private static final CapConnection CONNECTION = mock(CapConnection.class, RETURNS_DEEP_STUBS);
-  private static final Content LOCAL_CONTENT_106 = mock(Content.class);
-  private static final Content LOCAL_CONTENT_112 = mock(Content.class);
-  private static final Content LOCAL_CONTENT_118 = mock(Content.class);
-  private static final Content LOCAL_CONTENT_202 = mock(Content.class);
+  private static final Content LOCAL_CONTENT_106 = mock(Content.class, RETURNS_DEEP_STUBS);
+  private static final Content LOCAL_CONTENT_112 = mock(Content.class, RETURNS_DEEP_STUBS);
+  private static final Content LOCAL_CONTENT_118 = mock(Content.class, RETURNS_DEEP_STUBS);
+  private static final Content LOCAL_CONTENT_140 = mock(Content.class, RETURNS_DEEP_STUBS);
+  private static final Content LOCAL_CONTENT_202 = mock(Content.class, RETURNS_DEEP_STUBS);
 
   private static final IAPIRepository REMOTE_REPOSITORY = mock(IAPIRepository.class);
 
@@ -61,6 +63,7 @@ class CreateAndLinkContentsTest {
   private ContentDataModel remoteContent16;
   private ContentDataModel remoteContent18;
   private ContentDataModel remoteContent20;
+  private ContentDataModel remoteContent40;
 
 
   @BeforeEach
@@ -70,11 +73,13 @@ class CreateAndLinkContentsTest {
     when(contentRepository.getChild("path6")).thenReturn(LOCAL_CONTENT_106);
     when(contentRepository.getChild("path12")).thenReturn(LOCAL_CONTENT_112);
     when(contentRepository.getChild("path18")).thenReturn(LOCAL_CONTENT_118);
+    when(contentRepository.getChild("path40")).thenReturn(LOCAL_CONTENT_140);
     when(contentRepository.createChild(eq("path2"), eq("CMTeaser"), any())).thenReturn(LOCAL_CONTENT_202);
-    when(LOCAL_CONTENT_106.getId()).thenReturn("coremedia:///cap/content/106");
-    when(LOCAL_CONTENT_112.getId()).thenReturn("coremedia:///cap/content/112");
-    when(LOCAL_CONTENT_118.getId()).thenReturn("coremedia:///cap/content/118");
-    when(LOCAL_CONTENT_202.getId()).thenReturn("coremedia:///cap/content/202");
+    setUpLocalContent(LOCAL_CONTENT_106, "coremedia:///cap/content/106", "CMTeaser");
+    setUpLocalContent(LOCAL_CONTENT_112, "coremedia:///cap/content/112", "CMTeaser");
+    setUpLocalContent(LOCAL_CONTENT_118, "coremedia:///cap/content/118", "CMTeaser");
+    setUpLocalContent(LOCAL_CONTENT_140, "coremedia:///cap/content/140", "CMPicture");
+    setUpLocalContent(LOCAL_CONTENT_202, "coremedia:///cap/content/202", "CMTeaser");
 
     Map<String, PropertyModel> properties = new HashMap<>();
     LinklistPropertyModel linklist = new LinklistPropertyModel();
@@ -100,6 +105,13 @@ class CreateAndLinkContentsTest {
     remoteContent16 = createRemoteContent("coremedia:///cap/content/16", "path16");
     remoteContent18 = createRemoteContent("coremedia:///cap/content/18", "path18");
     remoteContent20 = createRemoteContent("coremedia:///cap/content/20", "path20");
+    remoteContent40 = createRemoteContent("coremedia:///cap/content/40", "path40");
+    // set up properties with a link that has a local counter-part with type mismatch
+    properties = new HashMap<>();
+    linklist = new LinklistPropertyModel();
+    linklist.setReferences(Collections.singletonList(remoteContent40));
+    properties.put("linklist", linklist);
+    remoteContent20.setProperties(properties);
 
     when(REMOTE_REPOSITORY.getContentById(any())).thenReturn(remoteContent2);
     when(REMOTE_REPOSITORY.getContentById("4")).thenReturn(remoteContent4);
@@ -111,9 +123,6 @@ class CreateAndLinkContentsTest {
     when(REMOTE_REPOSITORY.getContentById("16")).thenReturn(remoteContent16);
     when(REMOTE_REPOSITORY.getContentById("18")).thenReturn(remoteContent18);
     when(REMOTE_REPOSITORY.getContentById("20")).thenReturn(remoteContent20);
-
-    // TODO set up PROPERTY_MAPPER for link list, struct, and markup
-    //when(PROPERTY_MAPPER.getCoreMediaProperties(remoteContent2, eq()))
 
     testling = new CreateAndLinkContents() {
       protected PropertyMapper getPropertyMapper(ContentRepository repository) {
@@ -154,6 +163,16 @@ class CreateAndLinkContentsTest {
   }
 
   @Test
+  public void test_getLocalContent_typeMismatch() {
+    Map<String, String> idMap = new HashMap<>();
+    Map<String, Content> localContents = new HashMap<>();
+    assertThrows(ContentTypeMismatchException.class, () -> {
+      testling.getLocalContent(remoteContent40, contentRepository, idMap, localContents);
+    });
+    assertNull(idMap.get("40"));
+  }
+
+  @Test
   public void test_resolveReferences() {
     Map<String, String> idMap = new HashMap<>();
     Map<String, Content> localContents = new HashMap<>();
@@ -166,6 +185,16 @@ class CreateAndLinkContentsTest {
     assertMapEquals(localContents, "106", LOCAL_CONTENT_106, "112", LOCAL_CONTENT_112, "118", LOCAL_CONTENT_118);
     assertEquals(1, remoteSyncIdsRedo.size());
     assertEquals("2", remoteSyncIdsRedo.get(0));
+  }
+
+  @Test
+  public void test_resolveReferences_typeMismatch() {
+    Map<String, String> idMap = new HashMap<>();
+    Map<String, Content> localContents = new HashMap<>();
+    List<String> remoteSyncIds = Arrays.asList("2", "4", "10", "16");
+    List<String> remoteSyncIdsRedo = new ArrayList<>();
+    testling.resolveReferences(remoteContent20, contentRepository, REMOTE_REPOSITORY, idMap, localContents, remoteSyncIds, remoteSyncIdsRedo);
+    assertNull(idMap.get("40"));
   }
 
   @Test
@@ -200,14 +229,10 @@ class CreateAndLinkContentsTest {
     }
   }
 
-/*
-  CreateAndLinkContents.ActionParameters params = new CreateAndLinkContents.ActionParameters(
-          Arrays.asList("2", "4", "10", "16"),
-          "environment",
-          "token",
-          REMOTE_REPOSITORY
-  );
-*/
+  private void setUpLocalContent(Content content, String id, String type) {
+    when(content.getId()).thenReturn(id);
+    when(content.getType().getName()).thenReturn(type);
+  }
 
   private ContentDataModel createRemoteContent(String id, String path) {
     ContentDataModel remoteContent = new ContentDataModel();

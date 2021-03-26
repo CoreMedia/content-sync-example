@@ -5,6 +5,7 @@ import com.coremedia.blueprint.contentsync.client.IAPIContext;
 import com.coremedia.blueprint.contentsync.client.model.content.ContentDataModel;
 import com.coremedia.blueprint.contentsync.client.model.content.ContentRefDataModel;
 import com.coremedia.blueprint.contentsync.client.services.IAPIRepository;
+import com.coremedia.blueprint.contentsync.workflow.exception.ContentTypeMismatchException;
 import com.coremedia.blueprint.contentsync.workflow.property.PropertyMapper;
 import com.coremedia.cap.content.Content;
 import com.coremedia.cap.content.ContentRepository;
@@ -140,16 +141,20 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
     for (String remoteId : remoteSyncIds) {
       LOG.debug("syncing remote id {}", remoteId);
 
-      // get remote content
-      ContentDataModel remoteContent = getRemoteContent(remoteId, remoteRepository, remoteContents);
-      // get corresponding local content
-      Content localContent = getLocalContent(remoteContent, repository, idMap, localContents);
-      // resolve references
-      resolveReferences(remoteContent, repository, remoteRepository, idMap, localContents, remoteSyncIds, remoteSyncIdsRedo);
-      // get CoreMedia properties for remote content's properties
-      Map<String, ?> properties = propertyMapper.getCoreMediaProperties(remoteContent, idMap, localContents);
-      // create or update local content
-      createOrUpdateLocalContent(localContent, properties, remoteContent, repository, idMap, localContents);
+      try {
+        // get remote content
+        ContentDataModel remoteContent = getRemoteContent(remoteId, remoteRepository, remoteContents);
+        // get corresponding local content
+        Content localContent = getLocalContent(remoteContent, repository, idMap, localContents);
+        // resolve references
+        resolveReferences(remoteContent, repository, remoteRepository, idMap, localContents, remoteSyncIds, remoteSyncIdsRedo);
+        // get CoreMedia properties for remote content's properties
+        Map<String, ?> properties = propertyMapper.getCoreMediaProperties(remoteContent, idMap, localContents);
+        // create or update local content
+        createOrUpdateLocalContent(localContent, properties, remoteContent, repository, idMap, localContents);
+      } catch (Exception e) {
+        LOG.error("cannot sync remote content - skipping", e);
+      }
     }
     return remoteSyncIdsRedo;
   }
@@ -188,7 +193,14 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
     }
     if (localContent == null) {
       localContent = repository.getChild(remoteContent.getPath());
-      putLocalContentOptional(localContent, remoteId, localContents, idMap);
+      if (localContent != null) {
+        if (!isCMTypesMatching(remoteContent, localContent)) {
+          throw new ContentTypeMismatchException("content types for remote content " + remoteContent.getNumericId()
+                  + " do not match: remote content has type " + remoteContent.getType()
+                  + ", existing local content has type " + localContent.getType().getName());
+        }
+        putLocalContentOptional(localContent, remoteId, localContents, idMap);
+      }
     }
     return localContent;
   }
@@ -209,10 +221,16 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
       String remoteReferenceId = getNumericId(remoteReference);
       if (!idMap.containsKey(remoteReferenceId)) {
         // no mapping yet -> try to find local content counter-part
-        String referencePath = getPath(remoteReferenceId, remoteContent, remoteRepository);
-        Content referencedLocalContent = repository.getChild(referencePath);
-        putLocalContentOptional(referencedLocalContent, remoteReferenceId, localContents, idMap);
-        if (referencedLocalContent == null && remoteSyncIds.contains(remoteReferenceId)) {
+        ContentRefDataModel referencedRemoteContentRef = getReferencedRemoteContentRef(remoteReferenceId, remoteContent, remoteRepository);
+        Content referencedLocalContent = repository.getChild(referencedRemoteContentRef.getPath());
+        if (referencedLocalContent != null) {
+          if (isCMTypesMatching(referencedRemoteContentRef, referencedLocalContent)) {
+            putLocalContentOptional(referencedLocalContent, remoteReferenceId, localContents, idMap);
+          } else {
+            LOG.error("content type of local content on path {} ({}) does not match content type of remote content ({}) - skipping link",
+                    referencedRemoteContentRef.getPath(), referencedLocalContent.getType().getName(), referencedRemoteContentRef.getPath());
+          }
+        } else if (remoteSyncIds.contains(remoteReferenceId)) {
           // no local content found but id is in sync set: add current content to redo list in order to update in 2nd phase
           if (!remoteSyncIdsRedo.contains(remoteContent.getNumericId())) {
             remoteSyncIdsRedo.add(remoteContent.getNumericId());
@@ -244,6 +262,7 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
     }
 
   }
+
   /**
    * Returns just the id of a CoreMedia content id (stripping prefix {@code coremedia:///cap/content/}).
    */
@@ -282,23 +301,22 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
   }
 
   /**
-   * Returns the path for the given remote reference id or {@code null}, if no remote content with this id can be retrieved.
+   * Returns the reference model for the given remote reference id or {@code null}, if no remote content with this id can be retrieved.
    * For determination it uses information already existing in the given
    * remote content (via {@link com.coremedia.blueprint.contentsync.client.model.content.ContentRefDataModel}s used
    * as reference in link lists). If no such information can be found, the remote repository is queried (necessary
    * for references in markup and structs).
    */
-  private String getPath(String referenceId, ContentDataModel remoteContent, IAPIRepository remoteRepository) {
+  private ContentRefDataModel getReferencedRemoteContentRef(String referenceId, ContentDataModel remoteContent, IAPIRepository remoteRepository) {
     // firstly, check references in link list properties - paths are given there right away
     for (ContentRefDataModel referenceModel : remoteContent.getReferenceModels()) {
       if (referenceModel.getNumericId().equals(referenceId)) {
-        return referenceModel.getPath();
+        return referenceModel;
       }
     }
     // secondly, get referenced remote content to determine path
     try {
-      ContentDataModel referencedContent = remoteRepository.getContentById(referenceId);
-      return referencedContent.getPath();
+      return remoteRepository.getContentById(referenceId);
     } catch (Exception e) {
       LOG.error("cannot resolve reference for remote id " + referenceId, e);
       return null;
@@ -309,7 +327,14 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
    * Returns a property mapper for the given content repository. {@code protected} for testing purposes.
    */
   protected PropertyMapper getPropertyMapper(ContentRepository repository, IAPIRepository iapiRepository) {
-    return new PropertyMapper(repository,iapiRepository);
+    return new PropertyMapper(repository, iapiRepository);
+  }
+
+  /**
+   * Returns {@code true}, if remote and local contents's types match.
+   */
+  private boolean isCMTypesMatching(ContentRefDataModel remoteContent, Content localContent) {
+    return remoteContent.getType().equals(localContent.getType().getName());
   }
 
   static final class ActionParameters {

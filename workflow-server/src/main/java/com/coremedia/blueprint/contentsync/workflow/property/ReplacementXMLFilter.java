@@ -16,7 +16,7 @@ public class ReplacementXMLFilter extends XMLFilterImpl {
   private static final Logger LOG = LoggerFactory.getLogger(ReplacementXMLFilter.class);
 
   private Map<String, String> replacements;
-  private boolean deleteEntity = false;
+  protected boolean deleteEntity = false;
 
   public ReplacementXMLFilter(Map<String, String> replacements) {
     super();

@@ -54,6 +54,10 @@ class PropertyMapperTest {
           "<p><a xlink:show=\"embed\" xlink:href=\"#\" xlink:type=\"simple\">link</a></p>" +
           "<p><a xlink:show=\"embed\" xlink:href=\"https://www.coremedia.com\" xlink:type=\"simple\">link</a></p>" +
           "</div>";
+  private static final String SELECTION_RULES_ORIGINAL_STRING = "<rules version=\"1.0\" xmlns=\"http://www.coremedia.com/2010/selectionrules\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" +
+          "select <content xlink:href=\"coremedia:///cap/content/2\"/> if subjectTaxonomies.<content xlink:href=\"coremedia:///cap/content/10\"/>&gt;=0.1</rules>";
+  private static final String SELECTION_RULES_REPLACED_STRING = "<rules version=\"1.0\" xmlns=\"http://www.coremedia.com/2010/selectionrules\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" +
+          "select <content xlink:href=\"coremedia:///cap/content/6\"/> if subjectTaxonomies.<content xlink:href=\"\"/>&gt;=0.1</rules>";
   private static final UrlBlob BLOB = mock(UrlBlob.class);
   private static final byte[] BLOB_BYTES = new byte[]{0x0};
 
@@ -92,12 +96,13 @@ class PropertyMapperTest {
     properties.put("linklist", getLinklistPropertyModel());
     properties.put("struct", getStructPropertyModel());
     properties.put("markup", getMarkupPropertyModel());
+    properties.put("rules", getRulesPropertyModel());
     properties.put("blob", getBlobPorpertyModel());
     ContentDataModel model = new ContentDataModel();
     model.setProperties(properties);
 
     Map<String, Object> coreMediaProperties = testling.getCoreMediaProperties(model, replacements, contents);
-    assertEquals(7, coreMediaProperties.size());
+    assertEquals(8, coreMediaProperties.size());
     assertEquals("stringPropertyModelValue", coreMediaProperties.get("string"));
     assertEquals(4711, coreMediaProperties.get("integer"));
     assertEquals(GregorianCalendar.from(ZonedDateTime.of(1969, 12, 10, 8, 40, 0, 0, ZoneId.of("CET"))), coreMediaProperties.get("date"));
@@ -107,6 +112,8 @@ class PropertyMapperTest {
     assertEquals(STRUCT_REPLACED_STRING, ((Struct) coreMediaProperties.get("struct")).toMarkup().toString());
     assertTrue(coreMediaProperties.get("markup") instanceof Markup);
     assertEquals(RICHTEXT_REPLACED_STRING, coreMediaProperties.get("markup").toString());
+    assertTrue(coreMediaProperties.get("rules") instanceof Markup);
+    assertEquals(SELECTION_RULES_REPLACED_STRING, coreMediaProperties.get("rules").toString());
     assertTrue(coreMediaProperties.get("blob") instanceof Blob);
     assertEquals(BLOB, coreMediaProperties.get("blob"));
   }
@@ -150,6 +157,12 @@ class PropertyMapperTest {
   private MarkupPropertyModel getMarkupPropertyModel() {
     MarkupPropertyModel model = new MarkupPropertyModel();
     model.setValue(RICHTEXT_ORIGINAL_STRING);
+    return model;
+  }
+
+  private MarkupPropertyModel getRulesPropertyModel() {
+    MarkupPropertyModel model = new MarkupPropertyModel();
+    model.setValue(SELECTION_RULES_ORIGINAL_STRING);
     return model;
   }
 
