@@ -5,6 +5,7 @@ import com.coremedia.blueprint.contentsync.client.model.content.ContentRefDataMo
 import com.coremedia.blueprint.contentsync.client.model.property.*;
 import com.coremedia.blueprint.contentsync.client.services.IAPIRepository;
 import com.coremedia.cap.common.BlobService;
+import com.coremedia.cap.common.IdHelper;
 import com.coremedia.cap.content.Content;
 import com.coremedia.cap.content.ContentRepository;
 import com.coremedia.cap.struct.Struct;
@@ -42,17 +43,17 @@ public class PropertyMapper {
    * according to given id map. Link lists are linked to local contents according to the given local content map.
    * Server blobs will be read from remote CMS repository.
    *
-   * @param localContents map from local content numeric ids to local contents.
-   * @param idMap         map from remote numeric content ids to local numeric content ids.
+   * @param repository content repository.
+   * @param idMap      map from remote numeric content ids to local numeric content ids.
    */
   public Map<String, Object> getCoreMediaProperties(ContentDataModel ingestContent,
-                                                    Map<String, String> idMap,
-                                                    Map<String, Content> localContents) {
+                                                    ContentRepository repository,
+                                                    Map<String, String> idMap) {
     Map<String, PropertyModel> properties = ingestContent.getProperties();
     Map<String, Object> convertedProperties = new HashMap<>();
     properties.forEach((name, value) -> {
       try {
-        Object convertedValue = getConverted(value, idMap, localContents);
+        Object convertedValue = getConverted(value, repository, idMap);
         if (convertedValue != null) {
           convertedProperties.put(name, convertedValue);
         }
@@ -63,7 +64,7 @@ public class PropertyMapper {
     return convertedProperties;
   }
 
-  private Object getConverted(PropertyModel property, Map<String, String> idMap, Map<String, Content> localContents)
+  private Object getConverted(PropertyModel property, ContentRepository repository, Map<String, String> idMap)
           throws Exception {
     // TODO take care of special property "masterVersion" (e.g., always point to latest version of referenced master)
     if (property instanceof StringPropertyModel) {
@@ -71,7 +72,7 @@ public class PropertyMapper {
     } else if (property instanceof MarkupPropertyModel) {
       return getConverted((MarkupPropertyModel) property, idMap);
     } else if (property instanceof LinklistPropertyModel) {
-      return getConverted((LinklistPropertyModel) property, idMap, localContents);
+      return getConverted((LinklistPropertyModel) property, repository, idMap);
     } else if (property instanceof StructPropertyModel) {
       return getConverted((StructPropertyModel) property, idMap);
     } else if (property instanceof IntegerPropertyModel) {
@@ -88,13 +89,13 @@ public class PropertyMapper {
     throw new IllegalArgumentException("unknown property model " + property.getClass().getName());
   }
 
-  private List<Content> getConverted(LinklistPropertyModel property, Map<String, String> idMap, Map<String, Content> localContents) {
+  private List<Content> getConverted(LinklistPropertyModel property, ContentRepository repository, Map<String, String> idMap) {
     List<ContentRefDataModel> references = property.getReferences();
     if (references != null) {
       return references.stream()
               .filter(reference -> idMap.containsKey(reference.getNumericId()))
               .map(reference -> idMap.get(reference.getNumericId()))
-              .map(localContents::get)
+              .map(localReference -> repository.getContent(IdHelper.formatContentId(localReference)))
               .collect(Collectors.toList());
     }
     return null;

@@ -95,8 +95,6 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
 
     // map from remote numeric content ids to remote contents
     Map<String, ContentDataModel> remoteContents = new HashMap<>();
-    // map from local content numeric ids to local contents
-    Map<String, Content> localContents = new HashMap<>();
     // map from remote numeric content ids to local numeric content ids
     Map<String, String> idMap = new HashMap<>();
 
@@ -104,15 +102,16 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
     // with given or yet-to-be-sync'd local content in 2nd phase
     LOG.debug("sync 1st phase with ids {}", parameters.remoteSyncIds);
     List<String> remoteSyncIdsRedo = processRemoteIds(parameters.remoteSyncIds,
-            remoteContents, localContents, idMap, repository, parameters.remoteRepository);
+            remoteContents, idMap, repository, parameters.remoteRepository);
 
     // 2nd phase: re-process remote sync ids with (yet) unsatisfied links that can be resolved now with all remote
     // contents in place locally
     LOG.debug("sync 2nd phase with ids {}", remoteSyncIdsRedo);
-    processRemoteIds(remoteSyncIdsRedo, remoteContents, localContents, idMap, repository, parameters.remoteRepository);
+    processRemoteIds(remoteSyncIdsRedo, remoteContents, idMap, repository, parameters.remoteRepository);
 
-    // check in all checked-out local contents
-    for (Content localContent : localContents.values()) {
+    // check in all (potentially) checked-out local contents
+    for (String localId : idMap.values()) {
+      Content localContent = repository.getContent(localId);
       if (localContent.isCheckedOut()) {
         localContent.checkIn();
       }
@@ -129,14 +128,12 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
    * @param remoteSyncIds  list of remote sync ids to create contents for locally.
    * @param remoteContents map from remote numeric content ids to remote contents for "caching". Will be extended by
    *                       method for future use.
-   * @param localContents  map from local content numeric ids to local contents. Will be extended by method for future use.
    * @param idMap          map from remote numeric content ids to local numeric content ids. Will be extended by method for future use.
    * @return list of remote numeric content ids with references that can only be satisfied with given or
    * yet-to-be-sync'd local content in 2nd phase.
    */
   private List<String> processRemoteIds(List<String> remoteSyncIds,
                                         Map<String, ContentDataModel> remoteContents,
-                                        Map<String, Content> localContents,
                                         Map<String, String> idMap,
                                         ContentRepository repository,
                                         IAPIRepository remoteRepository) {
@@ -150,13 +147,13 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
         // get remote content
         ContentDataModel remoteContent = getRemoteContent(remoteId, remoteRepository, remoteContents);
         // get corresponding local content
-        Content localContent = getLocalContent(remoteContent, repository, idMap, localContents);
+        Content localContent = getLocalContent(remoteContent, repository, idMap);
         // resolve references
-        resolveReferences(remoteContent, repository, remoteRepository, idMap, localContents, remoteSyncIds, remoteSyncIdsRedo);
+        resolveReferences(remoteContent, repository, remoteRepository, idMap, remoteSyncIds, remoteSyncIdsRedo);
         // get CoreMedia properties for remote content's properties
-        Map<String, ?> properties = propertyMapper.getCoreMediaProperties(remoteContent, idMap, localContents);
+        Map<String, ?> properties = propertyMapper.getCoreMediaProperties(remoteContent, repository, idMap);
         // create or update local content
-        createOrUpdateLocalContent(localContent, properties, remoteContent, repository, idMap, localContents);
+        createOrUpdateLocalContent(localContent, properties, remoteContent, repository, idMap);
       } catch (Exception e) {
         LOG.error("cannot sync remote content - skipping", e);
       }
@@ -187,25 +184,17 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
    */
   protected Content getLocalContent(ContentRefDataModel remoteContent,
                                     ContentRepository repository,
-                                    Map<String, String> idMap,
-                                    Map<String, Content> localContents) {
+                                    Map<String, String> idMap) {
     // take local content from map or try to retrieve via UAPI
     String remoteId = remoteContent.getNumericId();
-    String localId = idMap.get(remoteId);
-    Content localContent = null;
-    if (localId != null) {
-      localContent = localContents.get(localId);
-    }
-    if (localContent == null) {
-      localContent = repository.getChild(remoteContent.getPath());
-      if (localContent != null) {
-        if (!isCMTypesMatching(remoteContent, localContent)) {
-          throw new ContentTypeMismatchException("content types for remote content " + remoteContent.getNumericId()
-                  + " do not match: remote content has type " + remoteContent.getType()
-                  + ", existing local content has type " + localContent.getType().getName());
-        }
-        putLocalContentOptional(localContent, remoteId, localContents, idMap);
+    Content localContent = repository.getChild(remoteContent.getPath());
+    if (localContent != null) {
+      if (!isCMTypesMatching(remoteContent, localContent)) {
+        throw new ContentTypeMismatchException("content types for remote content " + remoteContent.getNumericId()
+                + " do not match: remote content has type " + remoteContent.getType()
+                + ", existing local content has type " + localContent.getType().getName());
       }
+      putLocalContentOptional(localContent, remoteId, idMap);
     }
     return localContent;
   }
@@ -214,7 +203,6 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
                                    ContentRepository repository,
                                    IAPIRepository remoteRepository,
                                    Map<String, String> idMap,
-                                   Map<String, Content> localContents,
                                    List<String> remoteSyncIds,
                                    List<String> remoteSyncIdsRedo) {
     // do two things:
@@ -230,7 +218,7 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
         Content referencedLocalContent = repository.getChild(referencedRemoteContentRef.getPath());
         if (referencedLocalContent != null) {
           if (isCMTypesMatching(referencedRemoteContentRef, referencedLocalContent)) {
-            putLocalContentOptional(referencedLocalContent, remoteReferenceId, localContents, idMap);
+            putLocalContentOptional(referencedLocalContent, remoteReferenceId, idMap);
           } else {
             LOG.error("content type of local content on path {} ({}) does not match content type of remote content ({}) - skipping link",
                     referencedRemoteContentRef.getPath(), referencedLocalContent.getType().getName(), referencedRemoteContentRef.getPath());
@@ -249,13 +237,12 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
                                             Map<String, ?> properties,
                                             ContentDataModel remoteContent,
                                             ContentRepository repository,
-                                            Map<String, String> idMap,
-                                            Map<String, Content> localContents) {
+                                            Map<String, String> idMap) {
     if (localContent == null) {
       // create new local content, if it does not exist yet
       LOG.debug("creating local content on path {} for remote id {}", remoteContent.getPath(), remoteContent.getNumericId());
       localContent = repository.createChild(remoteContent.getPath(), remoteContent.getType(), properties);
-      putLocalContentOptional(localContent, remoteContent.getNumericId(), localContents, idMap);
+      putLocalContentOptional(localContent, remoteContent.getNumericId(), idMap);
     } else {
       // update local content, if it does exist
       LOG.debug("setting properties on local content with id {} for remote content with id {}",
@@ -289,18 +276,15 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
   /**
    * Puts a local content, if not null, to the corresponding maps.
    *
-   * @param content       the local content to store in maps.
-   * @param remoteId      the content's corresponding remote id (without prefix).
-   * @param localContents map from local content numeric ids to local contents. Will be extended by method for future use.
-   * @param idMap         map from remote numeric content ids to local numeric content ids. Will be extended by method for future use.
+   * @param content  the local content to store in maps.
+   * @param remoteId the content's corresponding remote id (without prefix).
+   * @param idMap    map from remote numeric content ids to local numeric content ids. Will be extended by method for future use.
    */
   private void putLocalContentOptional(Content content, String remoteId,
-                                       Map<String, Content> localContents,
                                        Map<String, String> idMap) {
     if (content != null) {
       // content present, put to corresponding maps for later reference
       String id = getNumericId(content.getId());
-      localContents.put(id, content);
       idMap.put(remoteId, getNumericId(id));
     }
   }

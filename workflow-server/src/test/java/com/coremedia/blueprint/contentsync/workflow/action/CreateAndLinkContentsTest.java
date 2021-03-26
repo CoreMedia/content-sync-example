@@ -147,17 +147,14 @@ class CreateAndLinkContentsTest {
   @Test
   public void test_getLocalContent() {
     Map<String, String> idMap = new HashMap<>();
-    Map<String, Content> localContents = new HashMap<>();
-    Content localContent = testling.getLocalContent(remoteContent2, contentRepository, idMap, localContents);
+    Content localContent = testling.getLocalContent(remoteContent2, contentRepository, idMap);
     assertNull(localContent);
-    localContent = testling.getLocalContent(remoteContent2, contentRepository, idMap, localContents);
+    localContent = testling.getLocalContent(remoteContent2, contentRepository, idMap);
     assertNull(localContent);
-    localContent = testling.getLocalContent(remoteContent6, contentRepository, idMap, localContents);
+    localContent = testling.getLocalContent(remoteContent6, contentRepository, idMap);
     assertEquals(LOCAL_CONTENT_106, localContent);
     assertEquals(1, idMap.size());
     assertEquals("106", idMap.get("6"));
-    assertEquals(1, localContents.size());
-    assertEquals(LOCAL_CONTENT_106, localContents.get("106"));
     verify(contentRepository, times(2)).getChild("path2");
     verify(contentRepository, times(1)).getChild("path6");
   }
@@ -165,9 +162,8 @@ class CreateAndLinkContentsTest {
   @Test
   public void test_getLocalContent_typeMismatch() {
     Map<String, String> idMap = new HashMap<>();
-    Map<String, Content> localContents = new HashMap<>();
     assertThrows(ContentTypeMismatchException.class, () -> {
-      testling.getLocalContent(remoteContent40, contentRepository, idMap, localContents);
+      testling.getLocalContent(remoteContent40, contentRepository, idMap);
     });
     assertNull(idMap.get("40"));
   }
@@ -175,14 +171,11 @@ class CreateAndLinkContentsTest {
   @Test
   public void test_resolveReferences() {
     Map<String, String> idMap = new HashMap<>();
-    Map<String, Content> localContents = new HashMap<>();
     List<String> remoteSyncIds = Arrays.asList("2", "4", "10", "16");
     List<String> remoteSyncIdsRedo = new ArrayList<>();
-    testling.resolveReferences(remoteContent2, contentRepository, REMOTE_REPOSITORY, idMap, localContents, remoteSyncIds, remoteSyncIdsRedo);
+    testling.resolveReferences(remoteContent2, contentRepository, REMOTE_REPOSITORY, idMap, remoteSyncIds, remoteSyncIdsRedo);
     assertEquals(3, idMap.size());
     assertMapEquals(idMap, "6", "106", "12", "112", "18", "118");
-    assertEquals(3, localContents.size());
-    assertMapEquals(localContents, "106", LOCAL_CONTENT_106, "112", LOCAL_CONTENT_112, "118", LOCAL_CONTENT_118);
     assertEquals(1, remoteSyncIdsRedo.size());
     assertEquals("2", remoteSyncIdsRedo.get(0));
   }
@@ -190,34 +183,28 @@ class CreateAndLinkContentsTest {
   @Test
   public void test_resolveReferences_typeMismatch() {
     Map<String, String> idMap = new HashMap<>();
-    Map<String, Content> localContents = new HashMap<>();
     List<String> remoteSyncIds = Arrays.asList("2", "4", "10", "16");
     List<String> remoteSyncIdsRedo = new ArrayList<>();
-    testling.resolveReferences(remoteContent20, contentRepository, REMOTE_REPOSITORY, idMap, localContents, remoteSyncIds, remoteSyncIdsRedo);
+    testling.resolveReferences(remoteContent20, contentRepository, REMOTE_REPOSITORY, idMap, remoteSyncIds, remoteSyncIdsRedo);
     assertNull(idMap.get("40"));
   }
 
   @Test
   public void test_createOrUpdateLocalContent_create() {
     Map<String, String> idMap = new HashMap<>();
-    Map<String, Content> localContents = new HashMap<>();
-    testling.createOrUpdateLocalContent(null, new HashMap<>(), remoteContent2, contentRepository, idMap, localContents);
+    testling.createOrUpdateLocalContent(null, new HashMap<>(), remoteContent2, contentRepository, idMap);
     verify(contentRepository, times(1)).createChild(eq("path2"), eq("CMTeaser"), any());
     assertEquals(1, idMap.size());
     assertEquals("202", idMap.get("2"));
-    assertEquals(1, localContents.size());
-    assertEquals(LOCAL_CONTENT_202, localContents.get("202"));
   }
 
   @Test
   public void test_createOrUpdateLocalContent_update() {
     Map<String, String> idMap = new HashMap<>();
-    Map<String, Content> localContents = new HashMap<>();
-    testling.createOrUpdateLocalContent(LOCAL_CONTENT_106, new HashMap<>(), remoteContent6, contentRepository, idMap, localContents);
+    testling.createOrUpdateLocalContent(LOCAL_CONTENT_106, new HashMap<>(), remoteContent6, contentRepository, idMap);
     verify(contentRepository, never()).createChild(anyString(), anyString(), any());
     verify(LOCAL_CONTENT_106, times(1)).setProperties(any());
     assertEquals(0, idMap.size());
-    assertEquals(0, localContents.size());
   }
 
   private void assertMapEquals(Map<?, ?> actual, Object... expected) {

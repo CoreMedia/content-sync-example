@@ -82,6 +82,8 @@ class PropertyMapperTest {
     contents.put("8", CONTENT_8);
     when(repository.getConnection().getStructService().fromMarkup(eq(STRUCT_MARKUP))).thenReturn(STRUCT_REPLACED);
     when(repository.getConnection().getBlobService()).thenReturn(BLOB_SERVICE);
+    when(repository.getContent("coremedia:///cap/content/6")).thenReturn(CONTENT_6);
+    when(repository.getContent("coremedia:///cap/content/8")).thenReturn(CONTENT_8);
     when(remoteRepository.getBlob("data", "2")).thenReturn(BLOB_BYTES);
     when(BLOB_SERVICE.fromBytes(BLOB_BYTES, "image/jpeg")).thenReturn(BLOB);
     when(STRUCT_REPLACED.toMarkup()).thenReturn(STRUCT_MARKUP);
@@ -101,7 +103,7 @@ class PropertyMapperTest {
     ContentDataModel model = new ContentDataModel();
     model.setProperties(properties);
 
-    Map<String, Object> coreMediaProperties = testling.getCoreMediaProperties(model, replacements, contents);
+    Map<String, Object> coreMediaProperties = testling.getCoreMediaProperties(model, repository, replacements);
     assertEquals(8, coreMediaProperties.size());
     assertEquals("stringPropertyModelValue", coreMediaProperties.get("string"));
     assertEquals(4711, coreMediaProperties.get("integer"));

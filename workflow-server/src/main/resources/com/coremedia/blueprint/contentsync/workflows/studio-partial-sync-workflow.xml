@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE Workflow SYSTEM "classpath:xml/coremedia-workflow.dtd">
 <!--
-          CoreMedia Simple Publication Workflow for Studio
+          Partial Content Sync Example Workflow for CoreMedia Studio
 -->
 
 <Workflow>
   <Process name="StudioPartialSyncWorkflow" description="studio-partial-sync-workflow"
-           startTask="Publish">
+           startTask="CreateAndLinkContents">
 
     <Rights>
       <Grant group="administratoren" rights="read, create, start, suspend, resume, abort"/>
@@ -15,65 +15,25 @@
     <AggregationVariable name="remoteSyncIds" type="String"/>
     <Variable name="environment" type="String"/>
     <Variable name="token" type="String"/>
-    <Variable name="subject" type="String"/>
-    <Variable name="comment" type="String"/>
-    <AggregationVariable name="changeSet" type="Resource"/>
-    <AggregationVariable name="comments" type="String"/>
+
     <InitialAssignment>
       <Writes variable="remoteSyncIds"/>
       <Writes variable="environment"/>
       <Writes variable="token"/>
-      <Writes variable="subject"/>
-      <Writes variable="comment"/>
-      <Writes variable="changeSet"/>
-      <Writes variable="comments"/>
     </InitialAssignment>
 
     <Assignment>
       <Writes variable="remoteSyncIds"/>
       <Writes variable="environment"/>
       <Writes variable="token"/>
-      <Reads variable="subject"/>
-      <Reads variable="comment"/>
-      <Reads variable="changeSet"/>
-      <Reads variable="comments"/>
     </Assignment>
 
-
-    <UserTask name="Publish"
-              description="studio-simple-publication-publish-task"
-              successor="Finish" reexecutable="true" autoAccepted="true" autoCompleted="true">
-      <Rights>
-        <Grant group="administratoren" rights="read, accept, retry"/>
-        <Grant group="composer-role" rights="read, accept, retry"/>
-      </Rights>
-
-      <Assignment>
-        <Reads variable="subject"/>
-        <Reads variable="comment"/>
-        <Reads description="publish-changeSet" variable="changeSet" contentEditable="false"/>
-        <Reads variable="comments"/>
-      </Assignment>
-
-      <EntryAction class="ApproveResource" gui="true"
-                   resourceVariable="changeSet"
-                   successVariable="publicationSuccessful"
-                   ignoreErrors="true"
-                   timeout="180"
-                   userVariable="PERFORMER_">
-      </EntryAction>
-
-      <EntryAction class="PublishResources" gui="true"
-                   resourceVariable="changeSet"
-                   resultVariable="publicationResultResources"
-                   versionVariable="publicationResultVersions"
-                   codeVariable="publicationResultCodes"
-                   parameterVariable="publicationResultParams"
-                   successVariable="publicationSuccessful" ignoreErrors="false"
-                   ignorePublicationErrors="true" timeout="600"
-                   userVariable="PERFORMER_"/>
-    </UserTask>
-
+    <AutomatedTask name="CreateAndLinkContents" successor="Finish">
+      <Action class="com.coremedia.blueprint.contentsync.workflow.action.CreateAndLinkContents"
+              environmentVariable="environment"
+              tokenVariable="token"
+              remoteSyncIdsVariable="remoteSyncIds"/>
+    </AutomatedTask>
 
     <AutomatedTask name="Finish" final="true"/>
 
