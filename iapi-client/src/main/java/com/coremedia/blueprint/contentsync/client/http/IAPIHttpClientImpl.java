@@ -52,7 +52,7 @@ public class IAPIHttpClientImpl implements IAPIHttpClient {
     httpClient.addInterceptor((chain) -> {
       Request original = chain.request();
       Request request = original.newBuilder()
-              .header("Authorization", "Bearer " + token)
+              .header(AUTHORIZATION, BEARER + token)
               .method(original.method(), original.body())
               .build();
 

@@ -14,11 +14,4 @@ public class IAPIConnectionImpl implements IAPIConnection {
   public IAPIRepository getRepository() {
     return new IAPIRepositoryImpl(httpClient);
   }
-
-  @Override
-  public IAPISitesService getSitesService() {
-    return null;
-  }
-
-
 }

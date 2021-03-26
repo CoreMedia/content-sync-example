@@ -11,6 +11,10 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * XML filter to map content references according to a given map of id replacements. References that cannot be
+ * replaced are removed. Removal is specific to the type of reference (link list, markup, struct, p13n rules).
+ */
 public class ReplacementXMLFilter extends XMLFilterImpl {
 
   private static final Logger LOG = LoggerFactory.getLogger(ReplacementXMLFilter.class);

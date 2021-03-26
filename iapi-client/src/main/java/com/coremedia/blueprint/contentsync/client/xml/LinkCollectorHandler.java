@@ -8,7 +8,10 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IAPIDefaultHandler extends DefaultHandler {
+/**
+ * XML filter to collect outgoing references (link list, markup, struct, p13n rules).
+ */
+public class LinkCollectorHandler extends DefaultHandler {
 
   private final List<String> links = new ArrayList<>();
 

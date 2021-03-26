@@ -1,7 +1,7 @@
 package com.coremedia.blueprint.contentsync.client.model.property;
 
 import com.coremedia.blueprint.contentsync.client.predicates.ContentTypePredicate;
-import com.coremedia.blueprint.contentsync.client.xml.IAPIDefaultHandler;
+import com.coremedia.blueprint.contentsync.client.xml.LinkCollectorHandler;
 import com.coremedia.xml.MarkupFactory;
 
 import java.util.Collections;
@@ -33,7 +33,7 @@ public class StructPropertyModel extends PropertyModel implements ReferencePrope
     if (getValue() == null){
       return Collections.emptyList();
     }
-    IAPIDefaultHandler handler = new IAPIDefaultHandler();
+    LinkCollectorHandler handler = new LinkCollectorHandler();
     MarkupFactory.fromString(getValue()).writeOn(handler);
     return handler.getLinks();
   }

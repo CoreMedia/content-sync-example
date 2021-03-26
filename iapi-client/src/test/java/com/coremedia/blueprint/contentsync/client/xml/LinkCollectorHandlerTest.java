@@ -11,15 +11,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class IAPIDefaultHandlerTest {
+class LinkCollectorHandlerTest {
 
-  private IAPIDefaultHandler testling;
+  private LinkCollectorHandler testling;
 
   private final AttributesImpl attributes = mock(AttributesImpl.class);
 
   @BeforeEach
   public void setUp() {
-    testling = new IAPIDefaultHandler();
+    testling = new LinkCollectorHandler();
     when(attributes.getIndex("xlink:href")).thenReturn(0);
   }
 
@@ -47,6 +47,15 @@ class IAPIDefaultHandlerTest {
     testling.startElement("uri", "LinkProperty", "LinkProperty", attributes);
     when(attributes.getValue("xlink:href")).thenReturn("coremedia:///cap/content/3");
     testling.startElement("uri", "LinkProperty", "LinkProperty", attributes);
+    assertEquals(Arrays.asList("coremedia:///cap/content/1", "coremedia:///cap/content/3"), testling.getLinks());
+  }
+
+  @Test
+  public void test_collectSelectionRulesProperties() throws SAXException {
+    when(attributes.getValue("xlink:href")).thenReturn("coremedia:///cap/content/1");
+    testling.startElement("uri", "content", "content", attributes);
+    when(attributes.getValue("xlink:href")).thenReturn("coremedia:///cap/content/3");
+    testling.startElement("uri", "content", "content", attributes);
     assertEquals(Arrays.asList("coremedia:///cap/content/1", "coremedia:///cap/content/3"), testling.getLinks());
   }
 }

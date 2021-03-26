@@ -21,6 +21,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Converter to map properties in remote contents to CoreMedia properties. Outgoing links are resolved to local
+ * contents, if possible, and removed otherwise. Blobs are pulled from server.
+ */
 public class PropertyMapper {
 
   private static final Logger LOG = LoggerFactory.getLogger(PropertyMapper.class);

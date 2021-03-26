@@ -24,18 +24,23 @@ import java.util.stream.Collectors;
 /**
  * This action creates local contents for a list of remote sync ids.
  * <p>
- * TODO The mechanism is as follows:
- * - Create/update all contents defined in ...
- * - Once the content is created/updated, the references are resolved, updated and linked to parent.
+ * The mechanism is as follows: for each remote content which is to be synchronized
+ * <ul>
+ * <li>Determine whether corresponding local content exists for remote content.</li>
+ * <li>Resolve all outgoing links in remote content (link lists, structs, markup, p13n markup) to either local
+ * contents or other (to be synchronized) remote content.</li>
+ * <li>If an outgoing link cannot be established (no local correspondent and not part of sync set),
+ * remove link.</li>
+ * <li>Convert properties of remote content to CoreMedia properties.</li>
+ * <li>Create or update corresponding local content.</li>
+ * </ul>
+ * </p>
  * <p>
  * The operation can be optimized for cases of heavily-interlinked remote contents which have no local
  * counter-part yet: instead of creating content regardless of their inter-linking, a tree of link dependencies
  * between remote contents could be built and processed leaf-to-root. This way, re-processing of a remote content
  * with yet unsatisified links can be omitted. This approach has to take care of circular links within remote
  * content set, though.
- * </p>
- * <p>
- * TODO: proper error handling in case of unretrievable contents missing
  * </p>
  */
 public class CreateAndLinkContents extends SpringAwareLongAction {
