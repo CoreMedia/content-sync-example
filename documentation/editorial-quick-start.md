@@ -20,7 +20,9 @@ extension points for customizations. Such a customization can be:
 - Implementation of a complete environment synchronization
 - Implementation for all sites of a given customer
 
-## Details of Operations & Limitations
+Also see [List of Open Points](loop.md) for limitations of current solution.
+
+## Details of Operations
 
 * For each remote content to be synchronized, a local content is created or an already existing local content
   at the same repository path is updated. The synchronization checks for matching content types in that case
@@ -30,9 +32,7 @@ extension points for customizations. Such a customization can be:
   the selected synchronization set are kept accordingly, of course.
 * No content except those selected for synchronization are created locally. If outgoing references have
   no corresponding local content, the reference will be removed (see above).
-* With current configuration, the synchronization app is only available to members of group
-_Administratoren_. Synchronized contents will show user _workflow_ as last editor.
-* Property _masterVersion_ of all content types is ignored during synchronization since it is a complex task to update it according to user's intention. Localization workflows may thus break or behave unexpectedly due to missing or not updated master versions.
+
 
 ## Contrib
 Please feel free to contribute your functionality! Contribution can be achieved by Pull Requests.
@@ -100,25 +100,26 @@ environment in the configured list is selected as active.
 ### Left column
 The column on the left is basically displaying all configuration options and actions. 
 
-#### Collapsible panel 1
+#### Panel 1
 Overview of all configured synchronization options. Please note that it is possible to add custom sync types e.g site-synchronization ... 
 
-#### Collapsible panel 2
+#### Panel 2
 Overview of all configured environments. This panel is reflecting the settings.
 
-#### Collapsible panel 3
+#### Panel 3
 This panel is providing the button to execute the workflow. If clicked, a workflow for the current synchronization set
 is started and an entry is added to the list in _panel 4_ (see next section).
 
-#### Collapsible panel 4
+#### Panel 4
 Once a workflow is started or there are already running synchronization workflows, those are displayed with the typename.
 Each workflow displayed in this panel can be ***aborted***. If the workflow terminates, the entry also disappears.
 
 ![Content-sync editor](img/WFS_Visible.png)
 
-As mentioned in the configuration section, it is also possible to configure ***exclusions*** where each exclusion
-- property exclusion
-- content-type exclusion
+As mentioned in the configuration section, it is also possible to configure ***exclusions*** where  
+- property exclusions and
+- content type exclusions
 
-will appear as separate Collapsible panel. The picture below is showing the panels.
+will appear as separate collapsible panels. The picture below is showing the panels.
 
+**TODO SCREENSHOT**

@@ -68,6 +68,20 @@ $ mvn extensions:sync -Denable=content-sync-example
 
 This will activate the extension. The extension tool will also set the relative path for the parents of the extension modules.
 
+## Provide Studio Settings
+
+**TODO** 
+
+```
+ingest.config.hosts[uat]=https://ingest.uat.myservice.coremedia.cloud/coremedia/api/ingest/v1/
+ingest.config.tokens[uat]=<myuattoken>
+ingest.config.syncGroups[uat]=Administratoren
+ingest.config.hosts[prod]=https://ingest.myservice.coremedia.cloud/coremedia/api/ingest/v1/
+ingest.config.tokens[prod]=<myprodtoken>
+ingest.config.syncGroups[prod]=Administratoren
+ingest.config.sync2wfs[partialSync]=StudioPartialSyncWorkflow
+```
+
 ## Upload Workflow
 
 The synchronization workflow must be uploaded to use the feature. This can be done

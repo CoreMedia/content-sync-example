@@ -10,6 +10,10 @@
 
     How to configure Content-sync extension (especially in CoreMedia Studio).
 
+1. [List of Open Points](loop.md)
+
+    Known open points in the current implementation.
+
 1. [Contribute](contribute.md)
 
     Read this if you are contributing to the project.
