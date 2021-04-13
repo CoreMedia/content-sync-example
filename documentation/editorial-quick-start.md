@@ -55,6 +55,18 @@ The picture below is depicting the high-level architecture:
 ![CoreMedia Labs Logo](img/Architecture.jpg "CoreMedia Labs Logo")
 
 ## Studio-server configuration
+The studio-server requires minimal configuration for the ingest-service communication (basically the jwt token),
+and information about the available workflows. The list below is outlining the configuration:
+* ingest.config.hosts[<IDENTIFIER_ENVIRONMENT>]=<URL_TO_INGEST>
+* ingest.config.tokens[<IDENTIFIER_ENVIRONMENT>]=<JWT_TOKEN>
+* ingest.config.sync2wfs[<IDENTIFIER_SYNC_TYPE]=<WORKFLOW_NAME>
+
+Please note that for the ingest.config.sync2wfs, the internal itemId for the selector in ContentEditor.mxml should be used. In our codebase, we are only providing
+the Partial synchronization, which is identified by the itemId "partialSync". The itemId is used as <IDENTIFIER_SYNC_TYPE>, and the workflow name
+in the "studio-partial-sync-workflow.xml" (StudioPartialSyncWorkflow).
+Example entry:
+ingest.config.sync2wfs[partialSync]=StudioPartialSyncWorkflow
+
 
 ## Studio-client configuration
 In Studio, it is necessary to create a new Settings document inside the folder:
