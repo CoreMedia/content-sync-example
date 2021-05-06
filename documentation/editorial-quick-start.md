@@ -70,7 +70,7 @@ ingest.config.sync2wfs[partialSync]=StudioPartialSyncWorkflow
 
 ## Studio-client configuration
 In Studio, it is necessary to create a new Settings document inside the folder:
-* /Options/Settings/Content Sync/ContentSyncSettings
+* /Options/Settings/Content sync/ContentSyncSettings
 
 The following entries needs to be present:
 
