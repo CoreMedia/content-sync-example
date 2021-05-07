@@ -27,6 +27,7 @@ public class SettingsAwareRadioGroupBase extends RadioGroup {
 
   private static const CHANGE_EVENT:String = "change";
   private static const ENVIRONMENT:String = "environment";
+  private var settings:Array;
 
   public function SettingsAwareRadioGroupBase(config:SettingsAwareRadioGroup = null) {
     super(config);
@@ -36,8 +37,15 @@ public class SettingsAwareRadioGroupBase extends RadioGroup {
   }
 
   private function handleChange(changed:*):void {
-    modelBean.set(ContentSyncConstants.SELECTED_ENVIRONMENT_SETTING,changed.getValue());
-    bindTo.setValue(changed.getValue().environment);
+    ContentSyncHelper.getContentSyncSettings().then(function (items:Array):void {
+      var env:String = changed.getValue().environment;
+      items.forEach(function (setting:ContentSyncSettings){
+        if (setting.identifier === env){
+          modelBean.set(ContentSyncConstants.SELECTED_ENVIRONMENT_SETTING,setting);
+          bindTo.setValue(changed.getValue().environment);
+        }
+      });
+    });
   }
 
   override protected function afterRender():void {
