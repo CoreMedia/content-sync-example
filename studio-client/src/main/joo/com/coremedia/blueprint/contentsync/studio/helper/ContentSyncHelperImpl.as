@@ -107,7 +107,7 @@ internal class ContentSyncHelperImpl implements IContentSyncHelper {
         var dataArray:Array = data.get("items");
         var runningInstances:Array =dataArray;
 
-        def.resolve(runningInstances.map(function (item){
+        def.resolve(runningInstances.map(function (item:*){
           item.name = resourceManager.getString('com.coremedia.blueprint.contentsync.studio.ContentSyncPluginResources',item.name.concat('_Name'));
           return item;
         }) || []);
@@ -155,10 +155,13 @@ internal class ContentSyncHelperImpl implements IContentSyncHelper {
     ).load();
   }
 
-  public function synchronizeContentList(model:Bean, origFn:FolderTreeNode):void {
+  public function synchronizeContentList(model:Bean, origFnArr:Array):void {
     var oldValue:Array = model.get(ContentSyncConstants.CONTENT_LIST_BEAN_PROPERTY);
-    var newContentListValue:* = oldValue.filter(function (item):Boolean {
-      return item.data.id !== origFn.data.id;
+    var newContentListValue:Array = oldValue;
+    origFnArr.forEach(function (entry:FolderTreeNode):void{
+      newContentListValue = newContentListValue.filter(function (item:FolderTreeNode):Boolean {
+        return item.data.id !== entry.data.id;
+      });
     });
     model.set(ContentSyncConstants.CONTENT_LIST_BEAN_PROPERTY, newContentListValue);
   }
