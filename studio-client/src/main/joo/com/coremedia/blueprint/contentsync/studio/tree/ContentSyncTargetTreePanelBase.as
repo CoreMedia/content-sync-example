@@ -27,7 +27,7 @@ public class ContentSyncTargetTreePanelBase extends TreePanel {
   public function ContentSyncTargetTreePanelBase(config:ContentSyncTargetTreePanel = null) {
     super(config);
     this.modelBean = config.modelBean;
-    on(CHECK_CHANGE,handleRemoveTargetTree);
+    on(CHECK_CHANGE, handleRemoveTargetTree);
     this.modelBean.addPropertyChangeListener(ContentSyncConstants.CONTENT_LIST_BEAN_PROPERTY, handleContentListChange);
     (getStore() as TreeStore).root = rootObj;
   }
@@ -37,8 +37,12 @@ public class ContentSyncTargetTreePanelBase extends TreePanel {
    * in the source sync tree as well. Please note that this "removal" is based on the common mechanism once the contentList is changing (model).
    * @param node The node which was unselected.
    */
-  private function handleRemoveTargetTree(node:FolderTreeNode):void{
-    ContentSyncHelper.synchronizeContentList(modelBean,node);
+  private function handleRemoveTargetTree(node:FolderTreeNode):void {
+    //handle also all childs which are shown as references
+    var nonLeafchildNodes:Array = node.childNodes || [];
+    nonLeafchildNodes = nonLeafchildNodes.concat(node);
+    ContentSyncHelper.synchronizeContentList(modelBean, nonLeafchildNodes);
+
   }
 
   /**
@@ -81,7 +85,11 @@ public class ContentSyncTargetTreePanelBase extends TreePanel {
    */
   private function handleRemove(item:FolderTreeNode):void {
     var toBeDeleted:FolderTreeNode = getStore().getById(item.data.id) as FolderTreeNode;
-    toBeDeleted.remove();
+    if (toBeDeleted) {
+      toBeDeleted.remove();
+    } else {
+      trace("[ContentSyncTargetTreePanelBase] could not perform remove")
+    }
   }
 
   /**
@@ -115,8 +123,8 @@ public class ContentSyncTargetTreePanelBase extends TreePanel {
       iconCls: item.data.iconCls
     });
     if (parseInt(itemId) % 2 == 0) {
-      Ext.merge(folderNode.data,{
-        checked:true
+      Ext.merge(folderNode.data, {
+        checked: true
       });
     }
 

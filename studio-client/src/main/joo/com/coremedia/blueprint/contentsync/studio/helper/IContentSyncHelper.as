@@ -48,7 +48,7 @@ public interface IContentSyncHelper {
    * @param model The bean all information is stored.
    * @param itemList the list of items which needs to be synced.
    */
-  function synchronizeContentList(model:Bean, item:FolderTreeNode):void;
+  function synchronizeContentList(model:Bean,  origFnArr:Array):void;
 
   function startWorkflow(modelBean:Bean):void;
 
