@@ -63,6 +63,9 @@ public class ContentSyncSourceTreePanelBase extends TreePanel {
   private function handleModelChange(changed:PropertyChangeEvent):void {
     var csm:ContentSyncSettings = modelBean.get(ContentSyncConstants.SELECTED_ENVIRONMENT_SETTING);
     var selectedValue:String = changed.newValue;
+    if (!selectedValue){
+      return;
+    }
     //if (!treeMap.containsKey(selectedValue)) {
       var tree:TreeStore = new FolderTreeStore(this, new ContentSyncIngestTreeModel(changed.newValue, csm.brandFolderId, modelBean), null, null);
       treeMap.add(selectedValue, tree);

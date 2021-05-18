@@ -37,6 +37,9 @@ public class ExcludeListRadioGroupBase extends Panel {
   }
 
   private function handleSetting(setting:ContentSyncSettings):void {
+    if (!setting){
+      return;
+    }
     var items:Array;
     if (modelProperty === PROPERTY_EXCLUDE) {
       items = setting.propertyExcludes;

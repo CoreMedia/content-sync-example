@@ -15,6 +15,7 @@ import com.coremedia.ui.data.impl.RemoteServiceMethod;
 import com.coremedia.ui.plugins.FolderTreeNode;
 
 import ext.Deferred;
+import ext.util.Base64;
 
 import mx.resources.IResourceManager;
 import mx.resources.ResourceManager;
@@ -39,9 +40,19 @@ internal class ContentSyncHelperImpl implements IContentSyncHelper {
             .concat(ident)
             .concat(CS_ID_SEGMENT)
             .concat(id).concat("?");
-    return beanFactory.getRemoteBean(addExclusions(url, ExcludeListRadioGroupBase.CONTENT_TYPE_EXCLUDE, modelBean)) as ContentSyncModel;
+    return beanFactory.getRemoteBean(
+            addUniqueIdent(
+                    addExclusions(url,
+                            ExcludeListRadioGroupBase.CONTENT_TYPE_EXCLUDE,
+                            modelBean)
+            )
+    ) as ContentSyncModel;
   }
 
+  private static function addUniqueIdent(url:String):String{
+    var num:String = Base64.encode(new Date().toString());
+    return (url.indexOf("?")>-1 ? url.concat("&") : url.concat("?")).concat("_uq=").concat(num);
+  }
 
   private static function addExclusions(url:String, modelProp:String, modelBean:Bean):String {
     var contentTypeExclusions:Array = modelBean.get(modelProp) || [];
