@@ -107,7 +107,7 @@
         <layout_HBox/>
       </editor:layout>
       <editor:plugins>
-        <ui:BindVisibilityPlugin bindTo="{getExcludePropertiesVE()}" transformer="{hasEntries}"/>
+        <ui:BindVisibilityPlugin bindTo="{getExcludeContentTypeVE()}" transformer="{hasEntries}"/>
       </editor:plugins>
     </editor:CollapsiblePanel>
 
