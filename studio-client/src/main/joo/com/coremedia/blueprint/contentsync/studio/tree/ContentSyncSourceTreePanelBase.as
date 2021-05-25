@@ -83,12 +83,13 @@ public class ContentSyncSourceTreePanelBase extends TreePanel {
       allSelectedContents = [ev].concat(allSelectedContents);
       //calculate the direct references, and the configured recursion depth.
       resolveAndAddReferences(ev);
+      modelBean.set(ContentSyncConstants.CONTENT_LIST_BEAN_PROPERTY, allSelectedContents);
     } else {
-      allSelectedContents = allSelectedContents.filter(function (it:FolderTreeNode):* {
-        return it.data.id !== ev.data.id;
-      });
+      var nonLeafchildNodes:Array = ev.childNodes || [];
+      nonLeafchildNodes = nonLeafchildNodes.concat(ev);
+      ContentSyncHelper.synchronizeContentList(modelBean, nonLeafchildNodes);
     }
-    modelBean.set(ContentSyncConstants.CONTENT_LIST_BEAN_PROPERTY, allSelectedContents);
+
   }
 
   private function resolveAndAddReferences(parentFolderTreeNode:FolderTreeNode):void {
@@ -100,13 +101,16 @@ public class ContentSyncSourceTreePanelBase extends TreePanel {
     )
             .then(function (item:ContentSyncReferenceModel):void {
               var ref:Array = item.getReferences(contentSyncSetting.identifier, modelBean);
+              var processesReferences:Array = [];
               ref.forEach(function (it:ContentSyncModel):void {
                 it.load(function (csm:ContentSyncModel):void {
                   var node:FolderTreeNode = ContentSyncHelper.contentSyncModel2FolderTreeNode(csm, parentFolderTreeNode);
+                  processesReferences.push(node);
                   var existentContent:Array = modelBean.get(ContentSyncConstants.CONTENT_LIST_BEAN_PROPERTY);
                   modelBean.set(ContentSyncConstants.CONTENT_LIST_BEAN_PROPERTY, [node].concat(existentContent));
                 });
               });
+              parentFolderTreeNode.childNodes = processesReferences;
             });
   }
 
