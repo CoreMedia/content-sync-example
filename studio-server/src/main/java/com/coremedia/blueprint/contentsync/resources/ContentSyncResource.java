@@ -39,6 +39,7 @@ public class ContentSyncResource {
   public static final String SYNCTYPE = "synctype";
   public static final String CONTENT_TYPE_EXCLUSIONS = "contentTypeExcludes";
   public static final String PROPERTY_EXCLUDES = "propertyExcludes";
+  public static final String RECURSION = "recursion";
 
   private final ContentSyncConnectionContextProvider connectionContext;
   private final ContentRepository repository;
@@ -118,8 +119,8 @@ public class ContentSyncResource {
 
   @GetMapping("references/{id}/{recursion}")
   public ContentSyncReferenceModel references(@PathVariable(IDENTIFIER) String ident,
-                                              @PathVariable("id") String id,
-                                              @PathVariable("recursion") int recursion,
+                                              @PathVariable(ID) String id,
+                                              @PathVariable(RECURSION) int recursion,
                                               @RequestParam(value = CONTENT_TYPE_EXCLUSIONS,required = false) List<String> contentTypeExcludes,
                                               @RequestParam(value = PROPERTY_EXCLUDES,required = false) List<String> propertyExcludes) {
     IAPIRepository iapiRepository = getConnectionFor(ident)

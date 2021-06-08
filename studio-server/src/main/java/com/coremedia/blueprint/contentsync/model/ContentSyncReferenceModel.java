@@ -32,7 +32,7 @@ public class ContentSyncReferenceModel {
               });
             });
     references.addAll(subReferences);
-    handleSubReferences(subReferences, ++currentRecursion, maxRecursion);
+    handleSubReferences(references, ++currentRecursion, maxRecursion);
   }
 
   public void addAll(List<String> refs) {
