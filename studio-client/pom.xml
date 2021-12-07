@@ -17,6 +17,11 @@
   </properties>
   <dependencies>
     <dependency>
+      <groupId>com.coremedia.cms</groupId>
+      <artifactId>studio-client.cap-base-models</artifactId>
+      <type>swc</type>
+    </dependency>
+    <dependency>
       <groupId>com.coremedia.blueprint.base</groupId>
       <artifactId>bpbase-studio-components</artifactId>
       <type>swc</type>
