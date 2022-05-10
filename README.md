@@ -17,6 +17,11 @@ The picture below is depicting the Content synchronization editor
 
 ![Content-sync editor](documentation/img/Full_Featured.png)
 
+## Upcoming changes
+* Due to a major change in the studio client, an upgrade is planned to support the new CoreMedia version starting with 2201
+* Fix planned for the Retrofit implementation (connection pooling)
+* Support for new Cloud infrastructure 
+
 ## Versioning
 
 > Change this note if you prefer a different versioning:
