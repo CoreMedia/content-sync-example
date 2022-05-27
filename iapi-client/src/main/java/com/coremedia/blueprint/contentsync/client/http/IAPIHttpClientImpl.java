@@ -6,10 +6,7 @@ import com.coremedia.blueprint.contentsync.client.model.content.ContentDataModel
 import com.coremedia.blueprint.contentsync.client.model.response.ResponseDataModel;
 import edu.umd.cs.findbugs.annotations.DefaultAnnotation;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.ResponseBody;
+import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import retrofit2.Call;
@@ -28,6 +25,7 @@ public class IAPIHttpClientImpl implements IAPIHttpClient {
   private static final String AUTHORIZATION = "Authorization";
   private static final String BEARER = "Bearer ";
   private IAPIEndpointHandler handler;
+  private final ConnectionPool connectionPool = new ConnectionPool();
 
   @Override
   public void init(String host, String token) {
@@ -58,7 +56,7 @@ public class IAPIHttpClientImpl implements IAPIHttpClient {
 
       return chain.proceed(request);
     });
-    return httpClient.build();
+    return httpClient.connectionPool(connectionPool).build();
   }
 
   /**
@@ -92,7 +90,7 @@ public class IAPIHttpClientImpl implements IAPIHttpClient {
   private byte[] executeBinaryCall(Call<ResponseBody> call) {
     try {
       Response<ResponseBody> response = call.execute();
-      if (response.isSuccessful()) {
+      if (response.isSuccessful() && response.body()!=null) {
         return response.body().bytes();
       } else if (response.code() == 400) {
         return new byte[0];
