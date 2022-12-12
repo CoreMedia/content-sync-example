@@ -13,6 +13,6 @@ public class ContentTypePredicate implements Predicate<String> {
 
   @Override
   public boolean test(String s) {
-    return !contentTypeNames.stream().anyMatch(p->p.equals(s));
+    return !contentTypeNames.stream().anyMatch(p -> p.equals(s));
   }
 }

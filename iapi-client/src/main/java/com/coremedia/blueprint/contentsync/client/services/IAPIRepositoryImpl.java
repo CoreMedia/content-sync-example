@@ -3,6 +3,7 @@ package com.coremedia.blueprint.contentsync.client.services;
 import com.coremedia.blueprint.contentsync.client.IAPIConstants;
 import com.coremedia.blueprint.contentsync.client.exception.IAPIInvalidReferenceException;
 import com.coremedia.blueprint.contentsync.client.http.IAPIHttpClient;
+import com.coremedia.blueprint.contentsync.client.model.auth.CloudToken;
 import com.coremedia.blueprint.contentsync.client.model.content.ContentDataModel;
 import com.coremedia.blueprint.contentsync.client.model.content.ContentRefDataModel;
 
@@ -41,5 +42,10 @@ public class IAPIRepositoryImpl implements IAPIRepository {
       return getContentById(reference.getId().substring(IAPIConstants.ID_PREFIX.length()));
     }
     throw new IAPIInvalidReferenceException(reference.getId());
+  }
+
+  @Override
+  public CloudToken getCloudAccessToken(long token) {
+    return httpClient.executeAuthCall(token);
   }
 }

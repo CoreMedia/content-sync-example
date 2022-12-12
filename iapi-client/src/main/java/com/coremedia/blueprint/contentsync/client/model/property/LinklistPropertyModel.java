@@ -39,7 +39,7 @@ public class LinklistPropertyModel extends PropertyModel implements ReferencePro
   public List<String> getFilteredReferences(ContentTypePredicate predicate) {
     return getReferences()
             .stream()
-            .filter(r->predicate.test(r.getType()))
+            .filter(r -> predicate.test(r.getType()))
             .map(ContentRefDataModel::getId)
             .collect(Collectors.toList());
   }

@@ -1,8 +1,0 @@
-{
-  "studioPlugins": [
-    {
-      "mainClass": "com.coremedia.blueprint.contentsync.studio.ContentSyncStudioPlugin",
-      "name": "ContentSyncPlugin"
-    }
-  ]
-}

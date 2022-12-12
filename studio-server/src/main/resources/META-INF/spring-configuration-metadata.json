@@ -1,0 +1,34 @@
+{
+  "properties": [
+    {
+      "name":"ingest.config.hosts",
+      "type": "java.util.Map",
+      "sourceType": "com.coremedia.blueprint.contentsync.ContentSyncProperties"
+    },
+    {
+      "name":"ingest.config.tokens",
+      "type": "java.util.Map",
+      "sourceType": "com.coremedia.blueprint.contentsync.ContentSyncProperties"
+    },
+    {
+      "name":"ingest.config.sync2wfs",
+      "type": "java.util.Map",
+      "sourceType": "com.coremedia.blueprint.contentsync.ContentSyncProperties"
+    },
+    {
+      "name":"ingest.config.syncGroups",
+      "type": "java.util.Map",
+      "sourceType": "com.coremedia.blueprint.contentsync.ContentSyncProperties"
+    },
+    {
+      "name":"ingest.config.useV2",
+      "type": "java.util.Map",
+      "sourceType": "com.coremedia.blueprint.contentsync.ContentSyncProperties"
+    },
+    {
+      "name":"ingest.config.cloudHost",
+      "type": "java.util.Map",
+      "sourceType": "com.coremedia.blueprint.contentsync.ContentSyncProperties"
+    }
+  ]
+}

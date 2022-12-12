@@ -15,11 +15,12 @@
     <AggregationVariable name="remoteSyncIds" type="String"/>
     <Variable name="environment" type="String"/>
     <Variable name="token" type="String"/>
-
+    <Variable name="useV2" type="Boolean"/>
     <InitialAssignment>
       <Writes variable="remoteSyncIds"/>
       <Writes variable="environment"/>
       <Writes variable="token"/>
+      <Writes variable="useV2"/>
     </InitialAssignment>
 
     <Assignment>
@@ -32,7 +33,9 @@
       <Action class="com.coremedia.blueprint.contentsync.workflow.action.CreateAndLinkContents"
               environmentVariable="environment"
               tokenVariable="token"
-              remoteSyncIdsVariable="remoteSyncIds"/>
+              remoteSyncIdsVariable="remoteSyncIds"
+              useV2VariableName="useV2"
+      />
     </AutomatedTask>
 
     <AutomatedTask name="Finish" final="true"/>

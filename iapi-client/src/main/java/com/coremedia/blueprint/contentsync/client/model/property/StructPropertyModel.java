@@ -30,7 +30,7 @@ public class StructPropertyModel extends PropertyModel implements ReferencePrope
 
   @Override
   public List<String> getReferenceIDs() {
-    if (getValue() == null){
+    if (getValue() == null) {
       return Collections.emptyList();
     }
     LinkCollectorHandler handler = new LinkCollectorHandler();

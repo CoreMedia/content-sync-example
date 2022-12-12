@@ -19,7 +19,6 @@
 
   <modules>
     <module>studio-server</module>
-    <module>studio-client</module>
     <module>iapi-client</module>
     <module>workflow-server</module>
   </modules>

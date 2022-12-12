@@ -1,5 +1,6 @@
 package com.coremedia.blueprint.contentsync.client;
 
+import com.coremedia.blueprint.contentsync.client.context.ContentSyncConnectionContext;
 import com.coremedia.blueprint.contentsync.client.http.IAPIHttpClientImpl;
 import com.coremedia.blueprint.contentsync.client.services.IAPIConnection;
 import com.coremedia.blueprint.contentsync.client.services.IAPIConnectionImpl;
@@ -12,26 +13,23 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  */
 public class IAPIContext {
 
-  private final String hostname;
-  private final String hostToken;
   private IAPIConnection connection;
   private IAPIHttpClient httpClient;
   private boolean wasInitialisedBefore = false;
+  private ContentSyncConnectionContext context;
 
-  private IAPIContext(String host, String token) {
-    hostname = host;
-    hostToken = token;
+  private IAPIContext(ContentSyncConnectionContext context) {
+    this.context = context;
   }
 
   /**
    * Returns a new IAPIContext for the given parameters
    *
-   * @param host,  hostname of the remote ingest-service
-   * @param token, provided jwt token for the ingest-service
+   * @param context, the configuration object
    * @return The newly created instance of the IAPIContext
    */
-  public static synchronized IAPIContext withHostAndToken(@NonNull String host, @NonNull String token) {
-    return new IAPIContext(host, token);
+  public static synchronized IAPIContext withContext(ContentSyncConnectionContext context) {
+    return new IAPIContext(context);
   }
 
   /**
@@ -65,7 +63,7 @@ public class IAPIContext {
    * @return the IAPIHttpClient implementation
    */
   private IAPIHttpClient prepareClient(@NonNull IAPIHttpClient client) {
-    client.init(this.hostname, this.hostToken);
+    client.init(context);
     return client;
   }
 
