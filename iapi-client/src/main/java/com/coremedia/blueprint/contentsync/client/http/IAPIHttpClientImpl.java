@@ -1,6 +1,7 @@
 package com.coremedia.blueprint.contentsync.client.http;
 
 import com.coremedia.blueprint.contentsync.client.context.ContentSyncConnectionContext;
+import com.coremedia.blueprint.contentsync.client.exception.IAPIAccessDenied;
 import com.coremedia.blueprint.contentsync.client.exception.IAPIInitialisedBeforeException;
 import com.coremedia.blueprint.contentsync.client.exception.IAPIInvalidResponseException;
 import com.coremedia.blueprint.contentsync.client.model.auth.CloudToken;
@@ -21,33 +22,34 @@ import java.util.concurrent.*;
 
 @DefaultAnnotation(NonNull.class)
 public class IAPIHttpClientImpl implements IAPIHttpClient {
-
-  private ScheduledFuture<?> scheduledFuture;
-  ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-
   private static final Logger LOG = LoggerFactory.getLogger(IAPIHttpClientImpl.class);
   private ConnectionPool connectionPool = new ConnectionPool();
   private static final String AUTHORIZATION = "Authorization";
   private static final String BEARER = "Bearer ";
   private IAPIEndpointHandler handler;
   private ICloudTokenHandler cloudTokenHandler;
+  private ContentSyncConnectionContext context;
 
   @Override
   public void init(ContentSyncConnectionContext context) {
+    this.context = context;
     if (handler == null && cloudTokenHandler == null) {
       if (context.isUseV2()) {
         cloudTokenHandler = createBaseRequest(context.getCloudHost(), context.getToken(), ICloudTokenHandler.class);
       }
-      handler = createBaseRequest(context.getHost(),
-              context.isUseV2() ? executeAuthCall(86400).getToken() : context.getToken(),
-              IAPIEndpointHandler.class);
     } else {
       throw new IAPIInitialisedBeforeException("You are trying to reinitialize the IAPIHttpClient, which is not supported!");
     }
   }
 
+  private void initHandler() throws IAPIAccessDenied {
+    handler = createBaseRequest(context.getHost(),
+            context.isUseV2() ? executeAuthCall(120).getToken() : context.getToken(),
+            IAPIEndpointHandler.class);
+  }
+
   @Override
-  public CloudToken executeAuthCall(long ttl) {
+  public CloudToken executeAuthCall(long ttl) throws IAPIAccessDenied {
     return executeCall(cloudTokenHandler.getCloudAuthToken(ttl));
   }
 //------------------------ Boilerplate stuff necessary to perform the requests defined in the interface
@@ -89,19 +91,49 @@ public class IAPIHttpClientImpl implements IAPIHttpClient {
   }
 
   public ContentDataModel executePathCall(String path) {
-    return executeCall(handler.getContentByPath(path)).getData();
+    try {
+      return executeCall(handler.getContentByPath(path)).getData();
+    } catch (IAPIAccessDenied ex) {
+      try {
+        initHandler();
+        return executeCall(handler.getContentByPath(path)).getData();
+      } catch (IAPIAccessDenied iaex) {
+        LOG.error("could not update token.");
+      }
+    }
+    return null;
   }
 
   public ContentDataModel executeIdCall(String id) {
-    return executeCall(handler.getContentById(id)).getData();
+    try {
+      return executeCall(handler.getContentById(id)).getData();
+    } catch (IAPIAccessDenied iapex) {
+      try {
+        initHandler();
+        return executeCall(handler.getContentById(id)).getData();
+      } catch (IAPIAccessDenied iaex) {
+        LOG.error("could not update token.");
+      }
+    }
+    return null;
   }
 
   @Override
   public byte[] getBlobForUrl(String contentId, String property) {
-    return executeBinaryCall(handler.getBlobUrl(contentId, property));
+    try {
+      return executeBinaryCall(handler.getBlobUrl(contentId, property));
+    } catch (IAPIAccessDenied iaex) {
+      try {
+        initHandler();
+        return executeBinaryCall(handler.getBlobUrl(contentId, property));
+      } catch (IAPIAccessDenied iex) {
+        LOG.error("could not update token.");
+      }
+    }
+    return null;
   }
 
-  private byte[] executeBinaryCall(Call<ResponseBody> call) {
+  private byte[] executeBinaryCall(Call<ResponseBody> call) throws IAPIAccessDenied {
     try {
       Response<ResponseBody> response = call.execute();
       if (response.isSuccessful()) {
@@ -109,6 +141,8 @@ public class IAPIHttpClientImpl implements IAPIHttpClient {
         return response.body().bytes();
       } else if (response.code() == 400) {
         return new byte[0];
+      } else if (response.code() == 403) {
+        throw new IAPIAccessDenied();
       }
     } catch (Exception ex) {
       LOG.error("cannot process request/response for binary data");
@@ -116,11 +150,13 @@ public class IAPIHttpClientImpl implements IAPIHttpClient {
     throw new IAPIInvalidResponseException();
   }
 
-  private <T> T executeCall(Call<T> call) {
+  private <T> T executeCall(Call<T> call) throws IAPIAccessDenied {
     try {
       Response<T> response = (Response<T>) call.execute();
       if (response.isSuccessful()) {
         return response.body();
+      } else if (response.code() == 403) {
+        throw new IAPIAccessDenied();
       }
     } catch (Exception e) {
       LOG.error("cannot process response");
