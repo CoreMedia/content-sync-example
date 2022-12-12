@@ -40,6 +40,7 @@ public class ContentSyncResource {
   public static final String CONTENT_TYPE_EXCLUSIONS = "contentTypeExcludes";
   public static final String PROPERTY_EXCLUDES = "propertyExcludes";
   public static final String RECURSION = "recursion";
+  public static final String USE_V_2 = "useV2";
 
   private final ContentSyncConnectionContextProvider connectionContext;
   private final ContentRepository repository;
@@ -88,6 +89,7 @@ public class ContentSyncResource {
         process.set(REMOTE_SYNC_IDS, body.get(REMOTE_SYNC_IDS));
         process.set(ENVIRONMENT, properties.getHosts().get(ident));
         process.set(TOKEN, properties.getTokens().get(ident));
+        process.set(USE_V_2,properties.getUseV2().getOrDefault(ident,false));
         process.start();
         model.setId(process.getId());
         model.setCreationDate(new GregorianCalendar().getTimeZone());

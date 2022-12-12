@@ -2,6 +2,7 @@ package com.coremedia.blueprint.contentsync.workflow.action;
 
 import com.coremedia.blueprint.contentsync.client.IAPIConstants;
 import com.coremedia.blueprint.contentsync.client.IAPIContext;
+import com.coremedia.blueprint.contentsync.client.context.ContentSyncConnectionContext;
 import com.coremedia.blueprint.contentsync.client.model.content.ContentDataModel;
 import com.coremedia.blueprint.contentsync.client.model.content.ContentRefDataModel;
 import com.coremedia.blueprint.contentsync.client.services.IAPIRepository;
@@ -51,6 +52,16 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
   private String tokenVariableName;
   private String remoteSyncIdsVariableName;
 
+  private String useV2VariableName;
+
+  public String getUseV2VariableName() {
+    return useV2VariableName;
+  }
+
+  public void setUseV2VariableName(String useV2VariableName) {
+    this.useV2VariableName = useV2VariableName;
+  }
+
   public void setEnvironmentVariable(String environment) {
     this.environmentVariableName = environment;
   }
@@ -80,7 +91,9 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
     Process process = task.getContainingProcess();
     return new ActionParameters(getNumericIds(process.getList(getRemoteSyncIdsVariable())),
             process.getString(getEnvironmentVariable()),
-            process.getString(getTokenVariable()));
+            process.getString(getTokenVariable()),
+            process.getBoolean(getUseV2VariableName())
+            );
   }
 
   @Override
@@ -328,26 +341,32 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
 
   static final class ActionParameters {
 
-    final List<String> remoteSyncIds;
-    final String environment;
-    final String token;
-    final IAPIRepository remoteRepository;
+    List<String> remoteSyncIds;
+    String environment;
+    String token;
 
-    ActionParameters(List<String> remoteSyncIds, String environment, String token) {
+    boolean useV2;
+    IAPIRepository remoteRepository;
+
+    ActionParameters(List<String> remoteSyncIds,
+                     String environment,
+                     String token, Boolean useV2) {
       this.remoteSyncIds = remoteSyncIds;
       this.environment = environment;
       this.token = token;
-      remoteRepository = IAPIContext.withHostAndToken(environment, token).build().getRepository();
-    }
+      this.useV2 = useV2 != null ? useV2 : false;
 
-    /**
-     * Constructor for test purposes.
-     */
-    ActionParameters(List<String> remoteSyncIds, String environment, String token, IAPIRepository remoteRepository) {
-      this.remoteSyncIds = remoteSyncIds;
-      this.environment = environment;
-      this.token = token;
-      this.remoteRepository = remoteRepository;
+      remoteRepository = IAPIContext
+              .withContext(new ContentSyncConnectionContext(
+                      environment,
+                      token,
+                      null,
+                      null,
+                      useV2,
+                      "")
+              )
+              .build()
+              .getRepository();
     }
   }
 }

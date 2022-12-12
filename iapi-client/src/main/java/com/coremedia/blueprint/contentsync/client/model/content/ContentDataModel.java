@@ -137,7 +137,7 @@ public class ContentDataModel extends ContentRefDataModel {
             .filter(es -> propertyPredicate.test(es.getKey()))
             .map(Map.Entry::getValue)
             .filter(entry -> entry instanceof ReferenceProperty)
-            .map(entry -> ((ReferenceProperty)entry).getFilteredReferences(contentPredicate))
+            .map(entry -> ((ReferenceProperty) entry).getFilteredReferences(contentPredicate))
             .forEach(references::addAll);
     return references;
   }
