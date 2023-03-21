@@ -37,6 +37,11 @@ public class IAPIHttpClientImpl implements IAPIHttpClient {
       if (context.isUseV2()) {
         cloudTokenHandler = createBaseRequest(context.getCloudHost(), context.getToken(), ICloudTokenHandler.class);
       }
+      try {
+        initHandler();
+      } catch (IAPIAccessDenied ex){
+        throw new RuntimeException("init failed");
+      }
     } else {
       throw new IAPIInitialisedBeforeException("You are trying to reinitialize the IAPIHttpClient, which is not supported!");
     }
@@ -76,7 +81,7 @@ public class IAPIHttpClientImpl implements IAPIHttpClient {
   }
 
   /**
-   * Configure and setup the deserializer.
+   * Configure and set up the deserializer.
    */
   private <T> T createBaseRequest(String host, String token, Class<T> clazz) {
     JacksonConverterFactory factory = JacksonConverterFactory.create();

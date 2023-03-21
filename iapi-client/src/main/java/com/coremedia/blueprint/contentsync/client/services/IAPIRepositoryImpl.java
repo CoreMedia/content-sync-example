@@ -1,6 +1,7 @@
 package com.coremedia.blueprint.contentsync.client.services;
 
 import com.coremedia.blueprint.contentsync.client.IAPIConstants;
+import com.coremedia.blueprint.contentsync.client.exception.IAPIAccessDenied;
 import com.coremedia.blueprint.contentsync.client.exception.IAPIInvalidReferenceException;
 import com.coremedia.blueprint.contentsync.client.http.IAPIHttpClient;
 import com.coremedia.blueprint.contentsync.client.model.auth.CloudToken;
@@ -46,6 +47,10 @@ public class IAPIRepositoryImpl implements IAPIRepository {
 
   @Override
   public CloudToken getCloudAccessToken(long token) {
-    return httpClient.executeAuthCall(token);
+    try {
+      return httpClient.executeAuthCall(token);
+    } catch (IAPIAccessDenied ia){
+      return null;
+    }
   }
 }
