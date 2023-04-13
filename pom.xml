@@ -9,7 +9,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <cms.version>2010.2</cms.version>
+    <cms.version>2107.7</cms.version>
     <maven.compiler.release>11</maven.compiler.release>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
