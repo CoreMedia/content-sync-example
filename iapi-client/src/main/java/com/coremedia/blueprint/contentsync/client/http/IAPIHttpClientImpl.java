@@ -2,9 +2,7 @@ package com.coremedia.blueprint.contentsync.client.http;
 
 import com.coremedia.blueprint.contentsync.client.context.ContentSyncConnectionContext;
 import com.coremedia.blueprint.contentsync.client.exception.IAPIAccessDenied;
-import com.coremedia.blueprint.contentsync.client.exception.IAPIInitialisedBeforeException;
 import com.coremedia.blueprint.contentsync.client.exception.IAPIInvalidResponseException;
-import com.coremedia.blueprint.contentsync.client.model.auth.CloudToken;
 import com.coremedia.blueprint.contentsync.client.model.content.ContentDataModel;
 import com.coremedia.blueprint.contentsync.client.model.response.ResponseDataModel;
 import edu.umd.cs.findbugs.annotations.DefaultAnnotation;
@@ -18,7 +16,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import retrofit2.http.*;
 
-import java.util.concurrent.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 
 @DefaultAnnotation(NonNull.class)
 public class IAPIHttpClientImpl implements IAPIHttpClient {
@@ -27,36 +27,25 @@ public class IAPIHttpClientImpl implements IAPIHttpClient {
   private static final String AUTHORIZATION = "Authorization";
   private static final String BEARER = "Bearer ";
   private IAPIEndpointHandler handler;
-  private ICloudTokenHandler cloudTokenHandler;
   private ContentSyncConnectionContext context;
 
   @Override
   public void init(ContentSyncConnectionContext context) {
     this.context = context;
-    if (handler == null && cloudTokenHandler == null) {
-      if (context.isUseV2()) {
-        cloudTokenHandler = createBaseRequest(context.getCloudHost(), context.getToken(), ICloudTokenHandler.class);
-      }
-      try {
-        initHandler();
-      } catch (IAPIAccessDenied ex){
-        throw new RuntimeException("init failed");
-      }
-    } else {
-      throw new IAPIInitialisedBeforeException("You are trying to reinitialize the IAPIHttpClient, which is not supported!");
+
+    try {
+      initHandler();
+    } catch (IAPIAccessDenied ex) {
+      throw new RuntimeException("init failed");
     }
   }
 
   private void initHandler() throws IAPIAccessDenied {
     handler = createBaseRequest(context.getHost(),
-            context.isUseV2() ? executeAuthCall(120).getToken() : context.getToken(),
+            context.getToken(),
             IAPIEndpointHandler.class);
   }
 
-  @Override
-  public CloudToken executeAuthCall(long ttl) throws IAPIAccessDenied {
-    return executeCall(cloudTokenHandler.getCloudAuthToken(ttl));
-  }
 //------------------------ Boilerplate stuff necessary to perform the requests defined in the interface
 
   /**
@@ -96,43 +85,27 @@ public class IAPIHttpClientImpl implements IAPIHttpClient {
   }
 
   public ContentDataModel executePathCall(String path) {
-    try {
-      return executeCall(handler.getContentByPath(path)).getData();
-    } catch (IAPIAccessDenied ex) {
-      try {
-        initHandler();
-        return executeCall(handler.getContentByPath(path)).getData();
-      } catch (IAPIAccessDenied iaex) {
-        LOG.error("could not update token.");
-      }
-    }
-    return null;
+    return executeWithRetry(this::executeCall, () -> handler.getContentByPath(path)).getData();
   }
 
   public ContentDataModel executeIdCall(String id) {
-    try {
-      return executeCall(handler.getContentById(id)).getData();
-    } catch (IAPIAccessDenied iapex) {
-      try {
-        initHandler();
-        return executeCall(handler.getContentById(id)).getData();
-      } catch (IAPIAccessDenied iaex) {
-        LOG.error("could not update token.");
-      }
-    }
-    return null;
+    return executeWithRetry(this::executeCall, () -> handler.getContentById(id)).getData();
   }
 
-  @Override
   public byte[] getBlobForUrl(String contentId, String property) {
+    return executeWithRetry(this::executeBinaryCall, () -> handler.getBlobUrl(contentId, property));
+  }
+
+  private <S,T> T executeWithRetry(Function<S, T> function, Supplier<S> provider) {
     try {
-      return executeBinaryCall(handler.getBlobUrl(contentId, property));
+      return function.apply(provider.get());
     } catch (IAPIAccessDenied iaex) {
       try {
         initHandler();
-        return executeBinaryCall(handler.getBlobUrl(contentId, property));
+        return function.apply(provider.get());
       } catch (IAPIAccessDenied iex) {
-        LOG.error("could not update token.");
+        LOG.warn("could not update token.");
+        LOG.debug("could not update token.", iex);
       }
     }
     return null;
@@ -164,7 +137,8 @@ public class IAPIHttpClientImpl implements IAPIHttpClient {
         throw new IAPIAccessDenied();
       }
     } catch (Exception e) {
-      LOG.error("cannot process response");
+      LOG.error("cannot process response: " + e.toString());
+      throw new IAPIInvalidResponseException(e.toString());
     }
     throw new IAPIInvalidResponseException();
   }
@@ -179,11 +153,6 @@ public class IAPIHttpClientImpl implements IAPIHttpClient {
 
     @GET("content/{id}/properties/{propertyName}/data")
     Call<ResponseBody> getBlobUrl(@Path("id") String id, @Path("propertyName") String propertyName);
-  }
-
-  public interface ICloudTokenHandler {
-    @POST("token")
-    Call<CloudToken> getCloudAuthToken(@Body long ttl);
   }
 
 }

@@ -52,16 +52,6 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
   private String tokenVariableName;
   private String remoteSyncIdsVariableName;
 
-  private String useV2VariableName;
-
-  public String getUseV2VariableName() {
-    return useV2VariableName;
-  }
-
-  public void setUseV2VariableName(String useV2VariableName) {
-    this.useV2VariableName = useV2VariableName;
-  }
-
   public void setEnvironmentVariable(String environment) {
     this.environmentVariableName = environment;
   }
@@ -91,8 +81,7 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
     Process process = task.getContainingProcess();
     return new ActionParameters(getNumericIds(process.getList(getRemoteSyncIdsVariable())),
             process.getString(getEnvironmentVariable()),
-            process.getString(getTokenVariable()),
-            process.getBoolean(getUseV2VariableName())
+            process.getString(getTokenVariable())
             );
   }
 
@@ -344,26 +333,21 @@ public class CreateAndLinkContents extends SpringAwareLongAction {
     List<String> remoteSyncIds;
     String environment;
     String token;
-
-    boolean useV2;
     IAPIRepository remoteRepository;
 
     ActionParameters(List<String> remoteSyncIds,
                      String environment,
-                     String token, Boolean useV2) {
+                     String token) {
       this.remoteSyncIds = remoteSyncIds;
       this.environment = environment;
       this.token = token;
-      this.useV2 = useV2 != null ? useV2 : false;
 
       remoteRepository = IAPIContext
               .withContext(new ContentSyncConnectionContext(
                       environment,
                       token,
                       null,
-                      null,
-                      useV2,
-                      "")
+                      null)
               )
               .build()
               .getRepository();
