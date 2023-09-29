@@ -19,16 +19,6 @@
       "name":"ingest.config.syncGroups",
       "type": "java.util.Map",
       "sourceType": "com.coremedia.blueprint.contentsync.ContentSyncProperties"
-    },
-    {
-      "name":"ingest.config.useV2",
-      "type": "java.util.Map",
-      "sourceType": "com.coremedia.blueprint.contentsync.ContentSyncProperties"
-    },
-    {
-      "name":"ingest.config.cloudHost",
-      "type": "java.util.Map",
-      "sourceType": "com.coremedia.blueprint.contentsync.ContentSyncProperties"
     }
   ]
 }

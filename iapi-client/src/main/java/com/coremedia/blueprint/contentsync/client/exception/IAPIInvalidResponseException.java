@@ -6,6 +6,10 @@ public class IAPIInvalidResponseException extends RuntimeException {
     super("Response was invalid");
   }
 
+  public IAPIInvalidResponseException(String details) {
+    super("Response was invalid: " + details);
+  }
+
   public IAPIInvalidResponseException(Throwable cause) {
     super(cause);
   }

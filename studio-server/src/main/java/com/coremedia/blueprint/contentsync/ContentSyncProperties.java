@@ -4,7 +4,6 @@ import com.coremedia.blueprint.contentsync.client.context.ContentSyncConnectionC
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -20,10 +19,8 @@ public class ContentSyncProperties {
   public static final String INGEST_CONFIG_SECTION = "ingest.config";
   Map<String, String> hosts;
   Map<String, String> tokens;
-  Map<String, String> cloudHosts;
   Map<String, String> syncGroups;
   Map<String,String>  sync2wfs;
-  Map<String,Boolean> useV2;
   public Map<String, String> getSyncGroups() {
     return syncGroups;
   }
@@ -44,14 +41,6 @@ public class ContentSyncProperties {
     return tokens;
   }
 
-  public void setCloudHosts(Map<String, String> hosts) {
-    this.cloudHosts = hosts;
-  }
-
-  public Map<String, String> getCloudHosts() {
-    return cloudHosts == null ? Collections.emptyMap() : cloudHosts;
-  }
-
   public void setTokens(Map<String, String> tokens) {
     this.tokens = tokens;
   }
@@ -64,21 +53,11 @@ public class ContentSyncProperties {
     this.sync2wfs = sync2wfs;
   }
 
-  public Map<String, Boolean> getUseV2() {
-    return useV2;
-  }
-
-  public void setUseV2(Map<String, Boolean> useV2) {
-    this.useV2 = useV2;
-  }
-
   public ContentSyncConnectionContext createContextFor(@NonNull String ident){
     return new ContentSyncConnectionContext(
             getHosts().getOrDefault(ident,null),
             getTokens().getOrDefault(ident,null),
-            getCloudHosts().getOrDefault(ident,"https://api.ps.coremedia.cloud/v1/"),
             getSyncGroups().getOrDefault(ident,"administratoren"),
-            getUseV2().getOrDefault(ident,false),
             ident);
   }
 }

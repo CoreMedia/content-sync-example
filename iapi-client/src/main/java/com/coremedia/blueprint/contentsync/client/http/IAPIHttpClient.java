@@ -1,8 +1,6 @@
 package com.coremedia.blueprint.contentsync.client.http;
 
 import com.coremedia.blueprint.contentsync.client.context.ContentSyncConnectionContext;
-import com.coremedia.blueprint.contentsync.client.exception.IAPIAccessDenied;
-import com.coremedia.blueprint.contentsync.client.model.auth.CloudToken;
 import com.coremedia.blueprint.contentsync.client.model.content.ContentDataModel;
 import edu.umd.cs.findbugs.annotations.DefaultAnnotation;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -16,12 +14,9 @@ public interface IAPIHttpClient {
    */
   void init(ContentSyncConnectionContext context);
 
-
   ContentDataModel executePathCall(String path);
 
   ContentDataModel executeIdCall(String id);
-
-  CloudToken executeAuthCall(long ttl) throws IAPIAccessDenied;
 
   byte[] getBlobForUrl(String contentId, String property);
 }

@@ -24,10 +24,10 @@ public class ReplacementXMLFilter extends XMLFilterImpl {
 
   public ReplacementXMLFilter(Map<String, String> replacements) {
     super();
-    if (replacements == null) {
-      this.replacements = Collections.emptyMap();
+    this.replacements = Collections.emptyMap();
+    if (null != replacements) {
+      this.replacements = replacements;
     }
-    this.replacements = replacements;
   }
 
   @Override

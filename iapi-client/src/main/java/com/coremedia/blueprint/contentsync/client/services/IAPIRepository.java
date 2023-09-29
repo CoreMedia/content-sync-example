@@ -1,7 +1,5 @@
 package com.coremedia.blueprint.contentsync.client.services;
 
-import com.coremedia.blueprint.contentsync.client.IAPIConstants;
-import com.coremedia.blueprint.contentsync.client.model.auth.CloudToken;
 import com.coremedia.blueprint.contentsync.client.model.content.ContentDataModel;
 import com.coremedia.blueprint.contentsync.client.model.content.ContentRefDataModel;
 
@@ -53,5 +51,4 @@ public interface IAPIRepository {
     return references.stream().map(this::getContentByReference).collect(Collectors.toList());
   }
 
-  CloudToken getCloudAccessToken(long ttl);
 }
