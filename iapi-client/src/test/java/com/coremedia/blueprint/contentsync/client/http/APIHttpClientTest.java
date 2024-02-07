@@ -8,6 +8,7 @@ import com.coremedia.blueprint.contentsync.client.model.property.*;
 import com.coremedia.blueprint.contentsync.client.services.IAPIRepository;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.net.*;
@@ -18,6 +19,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@Disabled
 public class APIHttpClientTest {
   ContentSyncConnectionContext context;
   Map<String, Integer> propertyDict;

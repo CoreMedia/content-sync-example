@@ -1,0 +1,12 @@
+@if $cm-include-tree-icon {
+  .x-grid-tree-node-expanded .x-tree-elbow-plus:before, .x-grid-tree-node-expanded .x-tree-elbow-end-plus:before {
+    content: '\f193';
+    font-family: "cm-core-icons-100";
+
+  }
+
+  .x-tree-elbow-plus:before, .x-tree-elbow-end-plus:before {
+    content: '\f136';
+    font-family: "cm-core-icons-100";
+  }
+}
