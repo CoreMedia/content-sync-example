@@ -30,6 +30,8 @@ public class ContentDataModel extends ContentRefDataModel {
   private List<ContentRefDataModel> children;
   private Map<String, PropertyModel> properties;
 
+  private Map<String, Object> links;
+
 
   public boolean isPublished() {
     return isPublished;
@@ -97,6 +99,14 @@ public class ContentDataModel extends ContentRefDataModel {
 
   public List<ContentRefDataModel> getChildren(ContentTypePredicate predicate) {
     return getChildren().stream().filter(cr -> predicate.test(cr.getType())).collect(Collectors.toList());
+  }
+
+  public Map<String, Object> getLinks() {
+    return links;
+  }
+
+  public void setLinks(Map<String, Object> links) {
+    this.links = links;
   }
 
   public void setChildren(List<ContentRefDataModel> children) {
