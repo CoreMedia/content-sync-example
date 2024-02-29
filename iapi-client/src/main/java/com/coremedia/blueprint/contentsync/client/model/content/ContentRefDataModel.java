@@ -2,9 +2,11 @@ package com.coremedia.blueprint.contentsync.client.model.content;
 
 import com.coremedia.blueprint.contentsync.client.IAPIConstants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.UUID;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ContentRefDataModel {
 
   private String id;

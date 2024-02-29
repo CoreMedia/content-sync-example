@@ -7,6 +7,7 @@ import com.coremedia.blueprint.contentsync.client.model.property.ReferenceProper
 import com.coremedia.blueprint.contentsync.client.predicates.ContentPropertyNamePredicate;
 import com.coremedia.blueprint.contentsync.client.predicates.ContentTypePredicate;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -14,9 +15,9 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ContentDataModel extends ContentRefDataModel {
 
   private boolean isPublished;
