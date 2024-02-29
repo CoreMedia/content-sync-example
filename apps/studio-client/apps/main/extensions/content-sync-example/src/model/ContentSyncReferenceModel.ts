@@ -15,7 +15,7 @@ class ContentSyncReferenceModel extends RemoteBeanImpl implements IContentSyncRe
   }
 
   getReferences(ident: string, modelBean: Bean): Array<any> {
-    return (this.get(ContentSyncReferenceModel.#REFERENCES) as Array).map((ref): ContentSyncModel =>{
+    return (this.get(ContentSyncReferenceModel.#REFERENCES) as Array<any>).map((ref): ContentSyncModel =>{
       const csm = as(ContentSyncHelper.getContentById(ref, ident, modelBean), ContentSyncModel);
       return csm;
     });

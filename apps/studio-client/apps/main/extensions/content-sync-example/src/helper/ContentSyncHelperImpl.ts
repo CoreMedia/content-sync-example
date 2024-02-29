@@ -20,6 +20,7 @@ import ContentSyncModel from "../model/ContentSyncModel";
 import ContentSyncReferenceModel from "../model/ContentSyncReferenceModel";
 import ContentSyncSettings from "../model/ContentSyncSettings";
 import IContentSyncHelper from "./IContentSyncHelper";
+import StructRemoteBean from "@coremedia/studio-client.cap-rest-client/struct/StructRemoteBean";
 
 class ContentSyncHelperImpl implements IContentSyncHelper {
 
@@ -103,7 +104,7 @@ class ContentSyncHelperImpl implements IContentSyncHelper {
           return;
         }
         (setting.getProperties()
-          .get(ContentSyncHelperImpl.#CM_SETTINGS_SETTINGS_PROP) as RemoteBean).load((baseStruct: Struct): void => {
+          .get(ContentSyncHelperImpl.#CM_SETTINGS_SETTINGS_PROP) as RemoteBean).load((baseStruct: StructRemoteBean): void => {
           const envList: Array<any> = baseStruct.get(ContentSyncHelperImpl.#ENVIRONMENTS);
           const propertyExcludes: Array<any> = baseStruct.get(ContentSyncHelperImpl.#PROPERTY_EXCLUDES);
           const contentTypeExcludes: Array<any> = baseStruct.get(ContentSyncHelperImpl.#CONTENT_TYPE_EXCLUDES);
@@ -123,7 +124,7 @@ class ContentSyncHelperImpl implements IContentSyncHelper {
     const remoteBean = beanFactory._.getRemoteBean(ContentSyncHelperImpl.#CS_BASE_URL
       .concat(ContentSyncHelperImpl.#NO_IDENT)
       .concat(ContentSyncHelperImpl.#CS_WFS_RUNNING)
-      .concat("?_ds=" + new Date().time));
+      .concat("?_ds=" + new Date().toTimeString()));
     if (!remoteBean.isLoaded()) {
       remoteBean.load((data: RemoteBean): void => {
         const dataArray: Array<any> = data.get("items");
@@ -145,7 +146,7 @@ class ContentSyncHelperImpl implements IContentSyncHelper {
       .concat(ContentSyncHelperImpl.#REFERENCES)
       .concat(id)
       .concat("/")
-      .concat(recursion)
+      .concat(recursion.toString())
       .concat("?");
     url = ContentSyncHelperImpl.#addExclusions(url, ExcludeListRadioGroupBase.PROPERTY_EXCLUDE, modelBean).concat("&");
     url = ContentSyncHelperImpl.#addExclusions(url, ExcludeListRadioGroupBase.CONTENT_TYPE_EXCLUDE, modelBean);

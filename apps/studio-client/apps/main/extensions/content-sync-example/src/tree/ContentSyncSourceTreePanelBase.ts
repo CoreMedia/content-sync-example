@@ -15,6 +15,7 @@ import ContentSyncReferenceModel from "../model/ContentSyncReferenceModel";
 import ContentSyncSettings from "../model/ContentSyncSettings";
 import ContentSyncIngestTreeModel from "./ContentSyncIngestTreeModel";
 import ContentSyncSourceTreePanel from "./ContentSyncSourceTreePanel";
+import Store from "@jangaroo/ext-ts/data/Store";
 
 interface ContentSyncSourceTreePanelBaseConfig extends Config<TreePanel>, Partial<Pick<ContentSyncSourceTreePanelBase,
   "modelBean"
@@ -48,7 +49,9 @@ class ContentSyncSourceTreePanelBase extends TreePanel {
     this.modelBean.addPropertyChangeListener(ExcludeListRadioGroupBase.CONTENT_TYPE_EXCLUDE, bind(this, this.#handleExcludes));
     this.modelBean.addPropertyChangeListener(ExcludeListRadioGroupBase.PROPERTY_EXCLUDE, bind(this, this.#handleExcludes));
 
+    //@ts-ignore
     this.on(ContentSyncSourceTreePanelBase.#ITEM_APPEND, ContentSyncSourceTreePanelBase.#addCheckBox);
+    //@ts-ignore
     this.on(ContentSyncSourceTreePanelBase.#CHECK_CHANGE, bind(this, this.#onCheckChanged));
   }
 
@@ -67,7 +70,7 @@ class ContentSyncSourceTreePanelBase extends TreePanel {
       const store = as(this.getStore(), TreeStore);
       store.beginUpdate();
       itemList.forEach((rem: any): void => {
-        const node = as(store.getById(rem.data.id), FolderTreeNode);
+        const node = as(store.getNodeById(rem.data.id), FolderTreeNode);
         if (node) {
           node.set("checked", false);
         }
@@ -87,7 +90,7 @@ class ContentSyncSourceTreePanelBase extends TreePanel {
     this.#treeMap.add(selectedValue, tree);
     //}
     this.modelBean.set(ContentSyncConstants.CONTENT_LIST_BEAN_PROPERTY, []);
-    this.setStore(as(this.#treeMap.get(selectedValue), TreeStore));
+    this.setStore(this.#treeMap.get(selectedValue) as Store);
   }
 
   #onCheckChanged(ev: FolderTreeNode): void {
@@ -139,7 +142,9 @@ class ContentSyncSourceTreePanelBase extends TreePanel {
   override destroy(...params): void {
     super.destroy(params);
     //unregister the append event
+    //@ts-ignore
     this.un(ContentSyncSourceTreePanelBase.#ITEM_APPEND, ContentSyncSourceTreePanelBase.#addCheckBox);
+    //@ts-ignore
     this.un(ContentSyncSourceTreePanelBase.#CHECK_CHANGE, bind(this, this.#onCheckChanged));
     this.modelBean.removePropertyChangeListener(ContentSyncConstants.SELECTED_ENVIRONMENT, bind(this, this.#handleModelChange));
     this.modelBean.removePropertyChangeListener(ContentSyncConstants.CONTENT_LIST_BEAN_PROPERTY, bind(this, this.#handleContentListChange));

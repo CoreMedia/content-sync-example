@@ -36,7 +36,7 @@ class RunningWfsInstancesGridPanel extends RunningWfsInstancesGridPanelBase {
           sortable: false,
           flex: 1,
           tooltip: ContentSyncPluginResources_properties.ContentSync_AbortWorkflow_ToolTip,
-          handler: bind(this$, this$.handleAbortWorkflow),
+          handler: this$.handleAbortWorkflow.bind(this$),
         }),
       ],
       plugins: [

@@ -2,15 +2,15 @@ import Bean from "@coremedia/studio-client.client-core/data/Bean";
 import PropertyChangeEvent from "@coremedia/studio-client.client-core/data/PropertyChangeEvent";
 import Checkbox from "@jangaroo/ext-ts/form/field/Checkbox";
 import Panel from "@jangaroo/ext-ts/panel/Panel";
-import { as, bind } from "@jangaroo/runtime";
+import {as, bind} from "@jangaroo/runtime";
 import Config from "@jangaroo/runtime/Config";
 import ContentSyncConstants from "../constant/ContentSyncConstants";
 import ContentSyncSettings from "../model/ContentSyncSettings";
 import ExcludeListRadioGroup from "./ExcludeListRadioGroup";
 
 interface ExcludeListRadioGroupBaseConfig extends Config<Panel>, Partial<Pick<ExcludeListRadioGroupBase,
-  "modelBean" |
-  "modelProperty"
+        "modelBean" |
+        "modelProperty"
 >> {
 }
 
@@ -75,7 +75,7 @@ class ExcludeListRadioGroupBase extends Panel {
           boxLabel: item,
           name: item,
           itemId: item.concat("_checkbox" + this.modelProperty),
-          listeners: { change: { fn: bind(this, this.#handleChange) } },
+          listeners: {change: this.#handleChange.bind(this)},
         }));
         this.add(checkBox);
       });
@@ -94,7 +94,7 @@ class ExcludeListRadioGroupBase extends Panel {
       this.modelBean.set(this.modelProperty, [checkBoxName].concat(excludes));
     } else {
       const clearedList: any = excludes.filter((it: any): boolean =>
-        it !== checkBoxName,
+              it !== checkBoxName,
       );
       this.modelBean.set(this.modelProperty, clearedList);
     }

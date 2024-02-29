@@ -5,11 +5,11 @@ module.exports = jangarooConfig({
   sencha: {
     name: "com.coremedia.blueprint__studio-client.labs-beta-ingest-client",
     namespace: "com.coremedia.blueprint.contentsync.studio",
-    css: [
+    /*css: [
       {
         path: "resources/css/contentsync.css",
       },
-    ],
+    ],*/
     studioPlugins: [
       {
         mainClass: "com.coremedia.blueprint.contentsync.studio.ContentSyncStudioPlugin",

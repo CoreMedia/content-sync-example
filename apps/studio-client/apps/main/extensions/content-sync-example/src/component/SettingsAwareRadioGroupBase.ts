@@ -57,7 +57,8 @@ class SettingsAwareRadioGroupBase extends RadioGroup {
     super(config);
     this.modelBean = config.modelBean;
     this.bindTo = config.bindTo;
-    this.addListener(SettingsAwareRadioGroupBase.#CHANGE_EVENT, bind(this, this.#handleChange));
+    //@ts-ignore
+    this.addListener(SettingsAwareRadioGroupBase.#CHANGE_EVENT, this.#handleChange);
   }
 
   #handleChange(changed: any): void {

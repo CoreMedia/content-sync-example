@@ -3,7 +3,7 @@ import editorContext from "@coremedia/studio-client.main.editor-components/sdk/e
 import Ext from "@jangaroo/ext-ts";
 import Action from "@jangaroo/ext-ts/Action";
 import Panel from "@jangaroo/ext-ts/panel/Panel";
-import { as, bind } from "@jangaroo/runtime";
+import {as, bind} from "@jangaroo/runtime";
 import Config from "@jangaroo/runtime/Config";
 import ContentSyncEditor from "../editor/ContentSyncEditor";
 
@@ -35,7 +35,7 @@ class OpenContentSyncWindowActionBase extends Action {
         workArea.setActiveTab(editor);
       });
     } else {
-      workArea.setActiveTab(ContentSyncEditor);
+      workArea.setActiveTab(contentSyncWindowTab);
     }
   }
 }

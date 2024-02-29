@@ -43,7 +43,7 @@ class ContentSyncTargetTreePanelBase extends TreePanel {
   constructor(config: Config<ContentSyncTargetTreePanel> = null) {
     super(config);
     this.modelBean = config.modelBean;
-    this.on(ContentSyncTargetTreePanelBase.#CHECK_CHANGE, bind(this, this.#handleRemoveTargetTree));
+    this.on(ContentSyncTargetTreePanelBase.#CHECK_CHANGE, this.#handleRemoveTargetTree.bind(this));
     this.modelBean.addPropertyChangeListener(ContentSyncConstants.CONTENT_LIST_BEAN_PROPERTY, bind(this, this.#handleContentListChange));
     asConfig((this.getStore() as TreeStore)).root = this.#rootObj;
   }
