@@ -4,34 +4,33 @@
   "version": "1.0.0-SNAPSHOT",
   "private": true,
   "dependencies": {
-    "@coremedia/studio-client.cap-base-models": "2307.1.0",
-    "@coremedia/studio-client.cap-rest-client": "2307.1.0",
-    "@coremedia/studio-client.client-core": "2307.1.0",
-    "@coremedia/studio-client.client-core-impl": "2307.1.0",
-    "@coremedia/studio-client.app-context-models": "2307.1.0",
-    "@coremedia/studio-client.core-icons": "2307.1.0",
-    "@coremedia/studio-client.ext.studio-theme": "2307.1.0",
-    "@coremedia/studio-client.ext.ui-components": "2307.1.0",
-    "@coremedia/studio-client.main.bpbase-studio-components": "2307.1.0",
-    "@coremedia/studio-client.main.editor-components": "2307.1.0",
-    "@jangaroo/ext-ts": "^1.0.3",
-    "@jangaroo/jooflash-core": "^1.0.0",
-    "@jangaroo/runtime": "^1.5.0"
+    "@coremedia/studio-client.cap-base-models": "2406.1.0",
+    "@coremedia/studio-client.cap-rest-client": "2406.1.0",
+    "@coremedia/studio-client.client-core": "2406.1.0",
+    "@coremedia/studio-client.client-core-impl": "2406.1.0",
+    "@coremedia/studio-client.app-context-models": "2406.1.0",
+    "@coremedia/studio-client.core-icons": "2406.1.0",
+    "@coremedia/studio-client.ext.studio-theme": "2406.1.0",
+    "@coremedia/studio-client.ext.ui-components": "2406.1.0",
+    "@coremedia/studio-client.main.bpbase-studio-components": "2406.1.0",
+    "@coremedia/studio-client.main.editor-components": "2406.1.0",
+    "@jangaroo/ext-ts": "^2.0.0",
+    "@jangaroo/runtime": "^3.1.0"
   },
   "devDependencies": {
-    "@jangaroo/build": "^1.5.0",
-    "@jangaroo/core": "^1.5.0",
-    "@jangaroo/eslint-config": "^1.5.0",
-    "@jangaroo/publish": "^1.5.0",
-    "eslint": "^7.32.0",
-    "rimraf": "^3.0.2"
+    "@coremedia/eslint-config-studio-client-ext": "2406.1.0",
+    "@jangaroo/build": "^3.1.0",
+    "@jangaroo/core": "^3.1.0",
+    "@jangaroo/publish": "^3.1.0",
+    "eslint": "^8.57.0",
+    "rimraf": "^5.0.7"
   },
   "scripts": {
     "clean": "rimraf ./dist && rimraf ./build",
     "build": "jangaroo build",
     "watch": "jangaroo watch",
     "publish": "jangaroo publish",
-    "lint": "eslint --fix \"src/**/*.ts\""
+    "lint": "eslint \"src/**/*.ts\""
   },
   "exports": {
     "./*": {
@@ -44,6 +43,7 @@
   },
   "publishConfig": {
     "directory": "dist",
+    "linkDirectory": false,
     "exports": {
       "./*": {
         "types": "./src/*.d.ts",

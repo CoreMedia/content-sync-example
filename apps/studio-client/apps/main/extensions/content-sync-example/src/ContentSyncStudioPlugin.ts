@@ -10,12 +10,10 @@ import ContentSyncPluginResources_properties from "./ContentSyncPluginResources_
 import ContentSyncStudioPluginBase from "./ContentSyncStudioPluginBase";
 import OpenContentSyncWindowAction from "./action/OpenContentSyncWindowAction";
 import ContentSyncEditor from "./editor/ContentSyncEditor";
-import StudioAppsImpl from "@coremedia/studio-client.app-context-models/apps/StudioAppsImpl";
-import studioApps from "@coremedia/studio-client.app-context-models/apps/studioApps";
 import ContentSyncModel from "./model/ContentSyncModel";
 import ContentSyncReferenceModel from "./model/ContentSyncReferenceModel";
 import IEditorContext from "@coremedia/studio-client.main.editor-components/sdk/IEditorContext";
-import {cast} from "@jangaroo/runtime";
+import {studioAppsContext} from "@coremedia/studio-client.app-context-models";
 
 interface ContentSyncStudioPluginConfig extends Config<ContentSyncStudioPluginBase> {
 }
@@ -43,7 +41,7 @@ class ContentSyncStudioPlugin extends ContentSyncStudioPluginBase {
 
     const button = new Button(buttonCfg);
 
-    cast(StudioAppsImpl, studioApps._).getSubAppLauncherRegistry().registerSubAppLauncher("ContentSync", (): void => {
+    studioAppsContext._.getShortcutRunnerRegistry().registerShortcutRunner("ContentSync", (): void => {
       typeof button.handler !== "string" && button.handler(button, null);
     });
   }

@@ -20,8 +20,9 @@ class ContentSyncSourceTreePanel extends ContentSyncSourceTreePanelBase {
   constructor(config: Config<ContentSyncSourceTreePanel> = null) {
     super(ConfigUtils.apply(Config(ContentSyncSourceTreePanel, {
 
+      useArrows:true,
       tbar: Config(Toolbar, {
-        height: 24,
+        height: 40,
         ui: ToolbarSkin.DARK_GREY.getSkin(),
         items: [
           Config(IconButton, {

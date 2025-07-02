@@ -15,7 +15,7 @@ import com.coremedia.xml.MarkupFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.activation.MimeTypeParseException;
+import jakarta.activation.MimeTypeParseException;
 import java.time.ZonedDateTime;
 import java.util.GregorianCalendar;
 import java.util.HashMap;

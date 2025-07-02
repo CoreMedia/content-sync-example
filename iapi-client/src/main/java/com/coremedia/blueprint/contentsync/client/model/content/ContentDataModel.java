@@ -14,11 +14,13 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ContentDataModel extends ContentRefDataModel {
 
+  private String checkedInVersionNumber;
+  private String checkedOutVersionNumber;
+  private String workingVersionNumber;
   private boolean isPublished;
   private boolean isInProduction;
   private LifeCycleStatus lifeCycleStatus;
@@ -166,5 +168,29 @@ public class ContentDataModel extends ContentRefDataModel {
             .map(property -> ((LinklistPropertyModel) property).getReferences())
             .forEach(references::addAll);
     return references;
+  }
+
+  public String getCheckedInVersionNumber() {
+    return checkedInVersionNumber;
+  }
+
+  public void setCheckedInVersionNumber(String checkedInVersionNumber) {
+    this.checkedInVersionNumber = checkedInVersionNumber;
+  }
+
+  public String getCheckedOutVersionNumber() {
+    return checkedOutVersionNumber;
+  }
+
+  public void setCheckedOutVersionNumber(String checkedOutVersionNumber) {
+    this.checkedOutVersionNumber = checkedOutVersionNumber;
+  }
+
+  public String getWorkingVersionNumber() {
+    return workingVersionNumber;
+  }
+
+  public void setWorkingVersionNumber(String workingVersionNumber) {
+    this.workingVersionNumber = workingVersionNumber;
   }
 }

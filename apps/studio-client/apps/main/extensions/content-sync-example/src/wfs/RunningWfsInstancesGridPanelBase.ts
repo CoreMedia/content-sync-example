@@ -2,8 +2,6 @@ import ValueExpression from "@coremedia/studio-client.client-core/data/ValueExpr
 import ValueExpressionFactory from "@coremedia/studio-client.client-core/data/ValueExpressionFactory";
 import EventUtil from "@coremedia/studio-client.client-core/util/EventUtil";
 import GridPanel from "@jangaroo/ext-ts/grid/Panel";
-import clearInterval from "@jangaroo/jooflash-core/flash/utils/clearInterval";
-import setInterval from "@jangaroo/jooflash-core/flash/utils/setInterval";
 import { bind } from "@jangaroo/runtime";
 import Config from "@jangaroo/runtime/Config";
 import uint from "@jangaroo/runtime/uint";
