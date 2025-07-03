@@ -47,8 +47,6 @@ class SettingsAwareRadioGroupBase extends RadioGroup {
     this.#bindTo = value;
   }
 
-  static readonly #CHANGE_EVENT: string = "change";
-
   static readonly #ENVIRONMENT: string = "environment";
 
   #settings: Array<any> = null;
@@ -57,7 +55,7 @@ class SettingsAwareRadioGroupBase extends RadioGroup {
     super(config);
     this.modelBean = config.modelBean;
     this.bindTo = config.bindTo;
-    this.addListener(SettingsAwareRadioGroupBase.#CHANGE_EVENT, bind(this, this.#handleChange));
+    this.addListener("change", bind(this, this.#handleChange));
   }
 
   #handleChange(changed: any): void {

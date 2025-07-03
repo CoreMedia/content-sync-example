@@ -3,12 +3,14 @@ package com.coremedia.blueprint.contentsync.resources;
 import com.coremedia.blueprint.contentsync.ContentSyncProperties;
 import com.coremedia.blueprint.contentsync.client.exception.IAPIInvalidResponseException;
 import com.coremedia.blueprint.contentsync.client.model.content.ContentDataModel;
+import com.coremedia.blueprint.contentsync.client.model.content.LifeCycleStatus;
 import com.coremedia.blueprint.contentsync.client.predicates.ContentPropertyNamePredicate;
 import com.coremedia.blueprint.contentsync.client.predicates.ContentTypePredicate;
 import com.coremedia.blueprint.contentsync.client.services.IAPIConnection;
 import com.coremedia.blueprint.contentsync.client.services.IAPIRepository;
 import com.coremedia.blueprint.contentsync.context.ContentSyncConnectionContextProvider;
 import com.coremedia.blueprint.contentsync.model.ContentSyncModel;
+import com.coremedia.blueprint.contentsync.model.ContentSyncReferenceByFolderModel;
 import com.coremedia.blueprint.contentsync.model.ContentSyncReferenceModel;
 import com.coremedia.blueprint.contentsync.model.ContentSyncWFSModel;
 import com.coremedia.cap.content.ContentRepository;
@@ -60,6 +62,10 @@ public class ContentSyncResource {
     ContentSyncModel contentSyncModel;
     try {
       ContentDataModel model = getConnectionFor(ident).getRepository().getContentById(id);
+      // TODO maybe something better to return for deleted content
+      if (model.getLifeCycleStatus().equals(LifeCycleStatus.DELETED)) {
+        return new ResponseEntity<>(null ,HttpStatus.NOT_FOUND);
+      }
       contentSyncModel =  new ContentSyncModel(model, new ContentTypePredicate(contentTypeExclusions));
     } catch (IAPIInvalidResponseException exception){
       ContentDataModel model = new ContentDataModel();
@@ -125,11 +131,17 @@ public class ContentSyncResource {
                                               @RequestParam(value = PROPERTY_EXCLUDES,required = false) List<String> propertyExcludes) {
     IAPIRepository iapiRepository = getConnectionFor(ident)
             .getRepository();
-    List<String> startReferences = iapiRepository
-            .getContentById(id)
-            .getReferences(new ContentPropertyNamePredicate(propertyExcludes),new ContentTypePredicate(contentTypeExcludes))
-            .stream().map(r -> r.replaceAll(COREMEDIA_CAP_CONTENT, "")).collect(Collectors.toList());
-    return new ContentSyncReferenceModel(iapiRepository, startReferences, recursion);
+
+    if (Integer.parseInt(id) % 2 == 0) {
+      List<String> startReferences = iapiRepository
+              .getContentById(id)
+              .getReferences(new ContentPropertyNamePredicate(propertyExcludes),new ContentTypePredicate(contentTypeExcludes))
+              .stream().map(r -> r.replaceAll(COREMEDIA_CAP_CONTENT, "")).collect(Collectors.toList());
+      return new ContentSyncReferenceModel(iapiRepository, startReferences, recursion);
+    } else {
+      List<String> startReferences = List.of(id);
+      return new ContentSyncReferenceByFolderModel(iapiRepository, startReferences, recursion);
+    }
   }
 
 

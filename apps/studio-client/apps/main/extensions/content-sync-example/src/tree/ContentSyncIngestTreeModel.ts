@@ -6,7 +6,6 @@ import NodeChildren from "@coremedia/studio-client.ext.ui-components/models/Node
 import Editor_properties from "@coremedia/studio-client.main.editor-components/Editor_properties";
 import CompoundChildTreeModel from "@coremedia/studio-client.main.editor-components/sdk/collectionview/tree/CompoundChildTreeModel";
 import { as, mixin } from "@jangaroo/runtime";
-import trace from "@jangaroo/runtime/trace";
 import { AnyFunction } from "@jangaroo/runtime/types";
 import ContentSyncHelper from "../helper/ContentSyncHelper";
 import ContentSyncModel from "../model/ContentSyncModel";
@@ -22,7 +21,7 @@ class ContentSyncIngestTreeModel implements CompoundChildTreeModel, LazyLoadingT
   #modelBean: Bean = null;
 
   constructor(env: string, brandFolderId: string, model: Bean) {
-    trace("[ContentSyncIngestTreeModel] initialised with environment " + env);
+    console.info("[ContentSyncIngestTreeModel] initialised with environment " + env);
     this.#environment = env;
     this.#brandFolderId = brandFolderId;
     this.#modelBean = model;

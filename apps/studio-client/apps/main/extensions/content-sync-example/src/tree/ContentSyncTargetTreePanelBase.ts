@@ -6,7 +6,6 @@ import TreeStore from "@jangaroo/ext-ts/data/TreeStore";
 import TreePanel from "@jangaroo/ext-ts/tree/Panel";
 import { as, asConfig, bind } from "@jangaroo/runtime";
 import Config from "@jangaroo/runtime/Config";
-import trace from "@jangaroo/runtime/trace";
 import ContentSyncPluginResources_properties from "../ContentSyncPluginResources_properties";
 import ContentSyncConstants from "../constant/ContentSyncConstants";
 import ContentSyncHelper from "../helper/ContentSyncHelper";
@@ -21,8 +20,6 @@ class ContentSyncTargetTreePanelBase extends TreePanel {
   declare Config: ContentSyncTargetTreePanelBaseConfig;
 
   static readonly #ID: string = "id";
-
-  static readonly #CHECK_CHANGE: string = "CheckChange";
 
   #modelBean: Bean = null;
 
@@ -43,7 +40,7 @@ class ContentSyncTargetTreePanelBase extends TreePanel {
   constructor(config: Config<ContentSyncTargetTreePanel> = null) {
     super(config);
     this.modelBean = config.modelBean;
-    this.on(ContentSyncTargetTreePanelBase.#CHECK_CHANGE, bind(this, this.#handleRemoveTargetTree));
+    this.on("checkchange", bind(this, this.#handleRemoveTargetTree));
     this.modelBean.addPropertyChangeListener(ContentSyncConstants.CONTENT_LIST_BEAN_PROPERTY, bind(this, this.#handleContentListChange));
     asConfig((this.getStore() as TreeStore)).root = this.#rootObj;
   }
@@ -104,7 +101,7 @@ class ContentSyncTargetTreePanelBase extends TreePanel {
     if (toBeDeleted) {
       toBeDeleted.remove();
     } else {
-      trace("[ContentSyncTargetTreePanelBase] could not perform remove");
+      console.info("[ContentSyncTargetTreePanelBase] could not perform remove");
     }
   }
 

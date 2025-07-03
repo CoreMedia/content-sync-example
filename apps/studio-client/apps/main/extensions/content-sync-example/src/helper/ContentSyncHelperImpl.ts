@@ -12,7 +12,6 @@ import Base64 from "@jangaroo/ext-ts/util/Base64";
 import { as, mixin } from "@jangaroo/runtime";
 import IResourceManager from "@jangaroo/runtime/l10n/IResourceManager";
 import resourceManager from "@jangaroo/runtime/l10n/resourceManager";
-import trace from "@jangaroo/runtime/trace";
 import ContentSyncPluginResources_properties from "../ContentSyncPluginResources_properties";
 import ExcludeListRadioGroupBase from "../component/ExcludeListRadioGroupBase";
 import ContentSyncConstants from "../constant/ContentSyncConstants";
@@ -88,7 +87,7 @@ class ContentSyncHelperImpl implements IContentSyncHelper {
         item.data.id,
       ),
     }, (ok): void =>
-      trace("[ContentSyncHelper] started workflow for " + selectedSync + " " + css.identifier),
+      console.info("[ContentSyncHelper] started workflow for " + selectedSync + " " + css.identifier),
     );
 
   }
@@ -103,7 +102,7 @@ class ContentSyncHelperImpl implements IContentSyncHelper {
           return;
         }
         (setting.getProperties()
-          .get(ContentSyncHelperImpl.#CM_SETTINGS_SETTINGS_PROP) as RemoteBean).load((baseStruct: Struct): void => {
+          .get(ContentSyncHelperImpl.#CM_SETTINGS_SETTINGS_PROP) as RemoteBean).load((baseStruct: RemoteBean): void => {
           const envList: Array<any> = baseStruct.get(ContentSyncHelperImpl.#ENVIRONMENTS);
           const propertyExcludes: Array<any> = baseStruct.get(ContentSyncHelperImpl.#PROPERTY_EXCLUDES);
           const contentTypeExcludes: Array<any> = baseStruct.get(ContentSyncHelperImpl.#CONTENT_TYPE_EXCLUDES);
@@ -123,7 +122,7 @@ class ContentSyncHelperImpl implements IContentSyncHelper {
     const remoteBean = beanFactory._.getRemoteBean(ContentSyncHelperImpl.#CS_BASE_URL
       .concat(ContentSyncHelperImpl.#NO_IDENT)
       .concat(ContentSyncHelperImpl.#CS_WFS_RUNNING)
-      .concat("?_ds=" + new Date().time));
+      .concat("?_ds=" + new Date().getTime()));
     if (!remoteBean.isLoaded()) {
       remoteBean.load((data: RemoteBean): void => {
         const dataArray: Array<any> = data.get("items");
@@ -145,7 +144,7 @@ class ContentSyncHelperImpl implements IContentSyncHelper {
       .concat(ContentSyncHelperImpl.#REFERENCES)
       .concat(id)
       .concat("/")
-      .concat(recursion)
+      .concat(recursion.toString())
       .concat("?");
     url = ContentSyncHelperImpl.#addExclusions(url, ExcludeListRadioGroupBase.PROPERTY_EXCLUDE, modelBean).concat("&");
     url = ContentSyncHelperImpl.#addExclusions(url, ExcludeListRadioGroupBase.CONTENT_TYPE_EXCLUDE, modelBean);

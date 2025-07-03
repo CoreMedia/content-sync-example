@@ -2,7 +2,6 @@ import Bean from "@coremedia/studio-client.client-core/data/Bean";
 import Action from "@jangaroo/ext-ts/Action";
 import { bind } from "@jangaroo/runtime";
 import Config from "@jangaroo/runtime/Config";
-import trace from "@jangaroo/runtime/trace";
 import ContentSyncConstants from "../constant/ContentSyncConstants";
 
 interface ReloadSourcePanelActionConfig extends Config<Action>, Partial<Pick<ReloadSourcePanelAction,
@@ -32,7 +31,7 @@ class ReloadSourcePanelAction extends Action {
   }
 
   #handleReloadAction() {
-    trace("[ReloadSourcePanelAction] reloading source tree");
+    console.info("[ReloadSourcePanelAction] reloading source tree");
     const setting: string = this.modelBean.get(ContentSyncConstants.SELECTED_ENVIRONMENT);
 
     this.modelBean.set(ContentSyncConstants.SELECTED_ENVIRONMENT, null);

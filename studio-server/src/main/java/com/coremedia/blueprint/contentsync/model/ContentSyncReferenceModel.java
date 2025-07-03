@@ -8,8 +8,8 @@ import java.util.List;
 
 public class ContentSyncReferenceModel {
   public static final String COREMEDIA_CAP_CONTENT = "coremedia:///cap/content/";
-  private List<String> references = new ArrayList<>();
-  private IAPIRepository repository;
+  protected List<String> references = new ArrayList<>();
+  protected IAPIRepository repository;
 
   public ContentSyncReferenceModel(IAPIRepository iapiRepository, List<String> initialIdList, int recursion) {
     this.repository = iapiRepository;
@@ -17,7 +17,7 @@ public class ContentSyncReferenceModel {
     handleSubReferences(references, 1, recursion);
   }
 
-  private void handleSubReferences(List<String> references, int currentRecursion, int maxRecursion) {
+  protected void handleSubReferences(List<String> references, int currentRecursion, int maxRecursion) {
     if (currentRecursion == maxRecursion) {
       return;
     }

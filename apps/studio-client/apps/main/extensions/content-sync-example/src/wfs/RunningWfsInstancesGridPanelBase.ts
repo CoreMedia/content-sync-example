@@ -7,6 +7,8 @@ import Config from "@jangaroo/runtime/Config";
 import uint from "@jangaroo/runtime/uint";
 import ContentSyncHelper from "../helper/ContentSyncHelper";
 import RunningWfsInstancesGridPanel from "./RunningWfsInstancesGridPanel";
+import TableView from "@jangaroo/ext-ts/view/Table";
+import Model from "@jangaroo/ext-ts/data/Model";
 
 interface RunningWfsInstancesGridPanelBaseConfig extends Config<GridPanel> {
 }
@@ -46,8 +48,7 @@ class RunningWfsInstancesGridPanelBase extends GridPanel {
     return data.length > 0;
   }
 
-  protected handleAbortWorkflow(grid: GridPanel, rowIndex: number): void {
-    const record = grid.getStore().getAt(rowIndex);
+  protected handleAbortWorkflow(view: TableView, rowIndex: number, colIndex: number, item: any, e: Event, record: Model, row: HTMLElement): void {
     ContentSyncHelper.abortWorkflow(record.data.id);
     const wfsInstances: Array<any> = this.getVE().getValue();
     this.getVE().setValue(wfsInstances.map(wf =>
