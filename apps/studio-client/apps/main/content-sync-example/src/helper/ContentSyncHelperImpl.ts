@@ -148,10 +148,9 @@ class ContentSyncHelperImpl implements IContentSyncHelper {
       .concat("?");
     url = ContentSyncHelperImpl.#addExclusions(url, ExcludeListRadioGroupBase.PROPERTY_EXCLUDE, modelBean).concat("&");
     url = ContentSyncHelperImpl.#addExclusions(url, ExcludeListRadioGroupBase.CONTENT_TYPE_EXCLUDE, modelBean);
-    const remoteBean: RemoteBean = as(beanFactory._.getRemoteBean(url), ContentSyncReferenceModel);
-    remoteBean.load((bean: ContentSyncReferenceModel): void =>
-      def.resolve(bean),
-    );
+    beanFactory._.getRemoteBean(url).load().then(result=>{
+      def.resolve(result);
+    });
     return def;
   }
 

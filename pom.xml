@@ -3,18 +3,24 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.coremedia.blueprint</groupId>
+
+  <parent>
+    <groupId>com.coremedia.blueprint</groupId>
+    <artifactId>common.blueprint-parent</artifactId>
+    <version>1-SNAPSHOT</version>
+    <relativePath>../../../shared/common/blueprint-parent/pom.xml</relativePath>
+  </parent>
+
   <artifactId>simple-content-sync</artifactId>
-  <version>1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
-    <cms.version>2307.1</cms.version>
-    <maven.compiler.release>11</maven.compiler.release>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.release>21</maven.compiler.release>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
   </properties>
 
   <modules>
@@ -28,14 +34,14 @@
       <dependency>
         <groupId>com.coremedia.cms</groupId>
         <artifactId>common-thirdparty-bom</artifactId>
-        <version>${cms.version}</version>
+        <version>${cm.common.core.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.coremedia.cms</groupId>
         <artifactId>common-core-bom</artifactId>
-        <version>${cms.version}</version>
+        <version>${cm.common.core.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

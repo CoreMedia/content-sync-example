@@ -64,7 +64,7 @@ public class ContentSyncResource {
       ContentDataModel model = getConnectionFor(ident).getRepository().getContentById(id);
       // TODO maybe something better to return for deleted content
       if (model.getLifeCycleStatus().equals(LifeCycleStatus.DELETED)) {
-        return new ResponseEntity<>(null ,HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
       }
       contentSyncModel =  new ContentSyncModel(model, new ContentTypePredicate(contentTypeExclusions));
     } catch (IAPIInvalidResponseException exception){

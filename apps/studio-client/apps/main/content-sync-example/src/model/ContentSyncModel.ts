@@ -1,6 +1,7 @@
-import RemoteBeanImpl from "@coremedia/studio-client.client-core-impl/data/impl/RemoteBeanImpl";
+
 import { mixin } from "@jangaroo/runtime";
 import IContentSyncModel from "./IContentSyncModel";
+import RemoteBeanImpl from "@coremedia/studio-client.client-core/data/impl/RemoteBeanImpl";
 
 class ContentSyncModel extends RemoteBeanImpl implements IContentSyncModel {
   static readonly REST_RESOURCE_URI_TEMPLATE: string = "contentsync/{path:.+}";
